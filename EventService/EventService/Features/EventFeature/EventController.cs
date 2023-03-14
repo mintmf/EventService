@@ -100,7 +100,7 @@ namespace EventService.Features.EventFeature
         {
             await _mediatr.Send(new DeleteEventCommand(eventId));
 
-            return Ok();
+            return StatusCode(StatusCodes.Status204NoContent);
         }
     }
 }
