@@ -1,9 +1,9 @@
-﻿namespace EventService.Features.EventFeature
+﻿namespace EventService.Features.TicketFeature
 {
     /// <summary>
     /// Билет на мероприятие
     /// </summary>
-    public class EventTicket
+    public class Ticket
     {
         /// <summary>
         /// ID билета

@@ -2,16 +2,20 @@
 using EventService.Features.EventFeature.DeleteEvent;
 using EventService.Features.EventFeature.GetEventList;
 using EventService.Features.EventFeature.UpdateEvent;
+using EventService.Filters;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using Swashbuckle.AspNetCore.Annotations;
+using SC.Internship.Common.ScResult;
 
 namespace EventService.Features.EventFeature
 {
     /// <summary>
     /// Контроллер мероприятий
     /// </summary>
-    public class EventController : Controller
+    [ApiController]
+    [Route("events")]
+    [TypeFilter(typeof(CommonExceptionFilter))]
+    public class EventController : ControllerBase
     {
         private readonly IMediator _mediatr;
 
@@ -25,7 +29,6 @@ namespace EventService.Features.EventFeature
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("events")]
         /*[SwaggerOperation(Description = "Этот метод возвращает список всех мероприятий", Summary = "Получение списка всех мероприятий")]
         [ProducesResponseType(typeof(List<Event>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]*/
@@ -39,33 +42,17 @@ namespace EventService.Features.EventFeature
         /// <summary>
         /// Создание мероприятия
         /// </summary>
-        /// <returns></returns>
+        /// <param name="sourceEvent">Мероприятие</param>
+        /// <returns>Мероприятие или сообщение об ошибке</returns>
+        /// <response code="200">Признак успешного выполнения операции</response>
+        /// <response code="400">Сообщение об ошибке</response>
         [HttpPost]
-        [Route("events")]
-        [SwaggerOperation(Description = "Этот метод создает новое мероприятие", Summary = "Создание мероприятия")]
-        /*[ProducesResponseType(typeof(Event), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]*/
-        public async Task<IActionResult> CreateEvent([FromBody] Event sourceEvent)
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ScResult<Event>> CreateEvent([FromBody] Event sourceEvent)
         {
-            try
-            {
-                var result = await _mediatr.Send(new CreateEventCommand { Event = sourceEvent });
-
-                if (result.ValidationResult.IsValid)
-                {
-                    return StatusCode(StatusCodes.Status201Created, result.Event);
-                }
-
-                var errorMessage = String.Join("; ", result.ValidationResult.Errors.Select(x => x.ErrorMessage));
-
-                return BadRequest(errorMessage);
-
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            return await _mediatr.Send(new CreateEventCommand { Event = sourceEvent });
         }
 
         /// <summary>
@@ -76,7 +63,7 @@ namespace EventService.Features.EventFeature
         /// <response code="200">Мероприятие</response>
         /// <response code="500">Внутренняя ошибка</response>
         [HttpPut]
-        [Route("events/{eventId}")]
+        [Route("{eventId}")]
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateEvent([FromRoute] Guid eventId, [FromBody] Event sourceEvent)
@@ -91,7 +78,7 @@ namespace EventService.Features.EventFeature
         /// </summary>
         /// <param name="eventId">ID мероприятия</param>
         [HttpDelete]
-        [Route("events/{eventId}")]
+        [Route("{eventId}")]
         /*[SwaggerOperation(Description = "Этот метод удаляет мероприятие", Summary = "Удаление мероприятия")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]*/

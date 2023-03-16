@@ -1,4 +1,4 @@
-﻿namespace EventService.Features.EventFeature
+﻿namespace EventService.Models
 {
     public class User
     {

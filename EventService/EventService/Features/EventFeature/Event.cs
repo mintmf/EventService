@@ -1,4 +1,6 @@
-﻿namespace EventService.Features.EventFeature
+﻿using EventService.Features.TicketFeature;
+
+namespace EventService.Features.EventFeature
 {
     /// <summary>
     /// Мероприятия
@@ -43,6 +45,6 @@
         /// <summary>
         /// Билеты на мероприятие
         /// </summary>
-        public List<EventTicket>? Tickets { get; set; }
+        public List<Ticket>? Tickets { get; set; }
     }
 }

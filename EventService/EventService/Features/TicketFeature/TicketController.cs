@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventService.Features.TicketFeature
 {
-    public class TicketController : Controller
+    [ApiController]
+    public class TicketController : ControllerBase
     {
         /// <summary>
         /// Создание бесплатных билетов
