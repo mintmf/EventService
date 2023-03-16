@@ -26,9 +26,9 @@ namespace EventService.Features.EventFeature
         /// <returns></returns>
         [HttpGet]
         [Route("events")]
-        [SwaggerOperation(Description = "Этот метод возвращает список всех мероприятий", Summary = "Получение списка всех мероприятий")]
+        /*[SwaggerOperation(Description = "Этот метод возвращает список всех мероприятий", Summary = "Получение списка всех мероприятий")]
         [ProducesResponseType(typeof(List<Event>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]*/
         public async Task<IActionResult> GetEventList()
         {
             var result = await _mediatr.Send(new GetEventListCommand());
@@ -43,9 +43,9 @@ namespace EventService.Features.EventFeature
         [HttpPost]
         [Route("events")]
         [SwaggerOperation(Description = "Этот метод создает новое мероприятие", Summary = "Создание мероприятия")]
-        [ProducesResponseType(typeof(Event), StatusCodes.Status201Created)]
+        /*[ProducesResponseType(typeof(Event), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]*/
         public async Task<IActionResult> CreateEvent([FromBody] Event sourceEvent)
         {
             try
@@ -71,12 +71,12 @@ namespace EventService.Features.EventFeature
         /// <summary>
         /// Изменение мероприятия
         /// </summary>
-        /// <param name="eventId"></param>
-        /// <param name="sourceEvent"></param>
-        /// <returns></returns>
+        /// <param name="eventId">ID мероприятия</param>
+        /// <param name="sourceEvent">Мероприятие</param>
+        /// <response code="200">Мероприятие</response>
+        /// <response code="500">Внутренняя ошибка</response>
         [HttpPut]
         [Route("events/{eventId}")]
-        [SwaggerOperation(Description = "Этот метод изменяет мероприятие", Summary = "Изменение мероприятия")]
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateEvent([FromRoute] Guid eventId, [FromBody] Event sourceEvent)
@@ -89,13 +89,12 @@ namespace EventService.Features.EventFeature
         /// <summary>
         /// Удаление мероприятия
         /// </summary>
-        /// <param name="eventId"></param>
-        /// <returns></returns>
+        /// <param name="eventId">ID мероприятия</param>
         [HttpDelete]
         [Route("events/{eventId}")]
-        [SwaggerOperation(Description = "Этот метод удаляет мероприятие", Summary = "Удаление мероприятия")]
+        /*[SwaggerOperation(Description = "Этот метод удаляет мероприятие", Summary = "Удаление мероприятия")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]*/
         public async Task<IActionResult> DeleteEvent([FromRoute] Guid eventId)
         {
             await _mediatr.Send(new DeleteEventCommand(eventId));

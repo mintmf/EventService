@@ -39,5 +39,10 @@
         /// Пространство, в котором проходит мероприятие
         /// </summary>
         public Guid? SpaceId { get; set; }
+
+        /// <summary>
+        /// Билеты на мероприятие
+        /// </summary>
+        public List<EventTicket>? Tickets { get; set; }
     }
 }
