@@ -1,13 +1,38 @@
-﻿using MediatR;
+﻿using EventService.ObjectStorage;
+using MediatR;
 using SC.Internship.Common.ScResult;
 
 namespace EventService.Features.TicketFeature.AddFreeTickets
 {
-    public class AddFreeTicketsCommandHandler : IRequestHandler<AddFreeTicketsCommand, ScResult>
+    /// <summary>
+    /// 
+    /// </summary>
+    public class AddFreeTicketsCommandHandler : IRequestHandler<AddFreeTicketsCommand, ScResult<List<Ticket>>>
     {
-        public Task<ScResult> Handle(AddFreeTicketsCommand request, CancellationToken cancellationToken)
+        private readonly ITicketRepository _ticketRepository;
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="ticketRepository"></param>
+        public AddFreeTicketsCommandHandler(ITicketRepository ticketRepository)
         {
-            throw new NotImplementedException();
+            _ticketRepository = ticketRepository;
+        }
+
+        /// <summary>
+        /// Обработчик команды добавления бесплтных билетов
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<ScResult<List<Ticket>>> Handle(AddFreeTicketsCommand request, CancellationToken cancellationToken)
+        {
+            var result = await _ticketRepository.AddFreeTicketsAsync(request.Parameters);
+            return new ScResult<List<Ticket>>
+            {
+                Result = result
+            };
         }
     }
 }

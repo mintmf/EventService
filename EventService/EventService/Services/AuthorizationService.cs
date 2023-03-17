@@ -11,11 +11,19 @@ namespace EventService.Services
     {
         private readonly IOptions<IdentityServerConfig> _config;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="config"></param>
         public AuthorizationService(IOptions<IdentityServerConfig> config)
         {
             _config = config;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<ScResult> AuthorizeAsync()
         {
             return new ScResult { };

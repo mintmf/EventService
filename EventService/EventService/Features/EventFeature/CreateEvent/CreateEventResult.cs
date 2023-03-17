@@ -15,6 +15,6 @@ namespace EventService.Features.EventFeature.CreateEvent
         /// <summary>
         /// Результат валидации мероприятия
         /// </summary>
-        public ValidationResult ValidationResult { get; set; }
+        public ValidationResult? ValidationResult { get; set; }
     }
 }

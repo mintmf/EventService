@@ -19,6 +19,10 @@ namespace EventService.Features.EventFeature
     {
         private readonly IMediator _mediatr;
 
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="mediator"></param>
         public EventController(IMediator mediator)
         {
             _mediatr = mediator;
@@ -28,10 +32,11 @@ namespace EventService.Features.EventFeature
         /// Получение списка всех мероприятий
         /// </summary>
         /// <returns></returns>
+        /// <response></response>
+        /// <response></response>
         [HttpGet]
-        /*[SwaggerOperation(Description = "Этот метод возвращает список всех мероприятий", Summary = "Получение списка всех мероприятий")]
-        [ProducesResponseType(typeof(List<Event>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]*/
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEventList()
         {
             var result = await _mediatr.Send(new GetEventListCommand());
@@ -64,8 +69,8 @@ namespace EventService.Features.EventFeature
         /// <response code="500">Внутренняя ошибка</response>
         [HttpPut]
         [Route("{eventId}")]
-        [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateEvent([FromRoute] Guid eventId, [FromBody] Event sourceEvent)
         {
             var result = await _mediatr.Send(new UpdateEventCommand(eventId, sourceEvent));
@@ -77,11 +82,12 @@ namespace EventService.Features.EventFeature
         /// Удаление мероприятия
         /// </summary>
         /// <param name="eventId">ID мероприятия</param>
+        /// <response></response>
+        /// <response></response>
         [HttpDelete]
         [Route("{eventId}")]
-        /*[SwaggerOperation(Description = "Этот метод удаляет мероприятие", Summary = "Удаление мероприятия")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]*/
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteEvent([FromRoute] Guid eventId)
         {
             await _mediatr.Send(new DeleteEventCommand(eventId));

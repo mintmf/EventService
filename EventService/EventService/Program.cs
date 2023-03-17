@@ -6,7 +6,7 @@ using Microsoft.OpenApi.Models;
 using EventRepository = EventService.ObjectStorage.EventRepository;
 using IEventRepository = EventService.ObjectStorage.IEventRepository;
 using EventService.Models.Configs;
-
+using EventService.ObjectStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -91,6 +91,7 @@ builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<ISpaceService, SpaceService>();
 builder.Services.AddScoped<IValidator<Event>, CreateEventValidator>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
+builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 
 
 builder.Services.Configure<IdentityServerConfig>(builder.Configuration.GetSection("IdentityServerConfig")); 

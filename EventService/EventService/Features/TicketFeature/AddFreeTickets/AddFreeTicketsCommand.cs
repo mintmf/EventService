@@ -3,8 +3,14 @@ using SC.Internship.Common.ScResult;
 
 namespace EventService.Features.TicketFeature.AddFreeTickets
 {
-    public class AddFreeTicketsCommand : IRequest<ScResult>
+    /// <summary>
+    /// Добавление бесплатных билетов
+    /// </summary>
+    public class AddFreeTicketsCommand : IRequest<ScResult<List<Ticket>>>
     {
-        public AddFreeTicketsParameters Parameters { get; set; }
+        /// <summary>
+        /// Параметры
+        /// </summary>
+        public AddFreeTicketsParameters? Parameters { get; set; }
     }
 }

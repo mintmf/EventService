@@ -8,6 +8,9 @@ using SC.Internship.Common.ScResult;
 
 namespace EventService.Features.EventFeature.CreateEvent
 {
+    /// <summary>
+    /// Класс обработчика команды создания нового мероприятия
+    /// </summary>
     public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, ScResult<Event>>
     {
         private readonly IEventRepository _eventRepository;

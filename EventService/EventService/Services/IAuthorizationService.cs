@@ -2,6 +2,9 @@
 
 namespace EventService.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public interface IAuthorizationService
     {
         /// <summary>
