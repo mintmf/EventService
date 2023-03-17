@@ -24,12 +24,12 @@
         public string Address { get; set; }
 
         /// <summary>
-        /// 
+        /// Authority
         /// </summary>
         public string Authority { get; set; }
 
         /// <summary>
-        /// 
+        /// Audince
         /// </summary>
         public string Audience { get; set; }
     }

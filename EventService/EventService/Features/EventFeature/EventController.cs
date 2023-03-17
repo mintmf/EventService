@@ -27,21 +27,24 @@ namespace EventService.Features.EventFeature
         {
             _mediatr = mediator;
         }
-        
+
         /// <summary>
         /// Получение списка всех мероприятий
         /// </summary>
-        /// <returns></returns>
-        /// <response></response>
-        /// <response></response>
+        /// <returns>Список всех мероприятий</returns>
+        /// <response code="200">Мероприятия</response>
+        /// <response code="500">Внутренняя ошибка</response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetEventList()
+        public async Task<ScResult<List<Event>>> GetEventList()
         {
             var result = await _mediatr.Send(new GetEventListCommand());
 
-            return Ok(result);
+            return new ScResult<List<Event>>
+            {
+                Result = result
+            };
         }
 
         /// <summary>
@@ -65,28 +68,30 @@ namespace EventService.Features.EventFeature
         /// </summary>
         /// <param name="eventId">ID мероприятия</param>
         /// <param name="sourceEvent">Мероприятие</param>
+        /// <returns>Измененное мероприятие</returns>
         /// <response code="200">Мероприятие</response>
         /// <response code="500">Внутренняя ошибка</response>
         [HttpPut]
+        [Produces("application/json")]
         [Route("{eventId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateEvent([FromRoute] Guid eventId, [FromBody] Event sourceEvent)
+        public async Task<ScResult<Event>> UpdateEvent([FromRoute] Guid eventId, [FromBody] Event sourceEvent)
         {
             var result = await _mediatr.Send(new UpdateEventCommand(eventId, sourceEvent));
 
-            return Ok(result);
+            return new ScResult<Event> { Result = result};
         }
 
         /// <summary>
         /// Удаление мероприятия
         /// </summary>
         /// <param name="eventId">ID мероприятия</param>
-        /// <response></response>
-        /// <response></response>
+        /// <response code="200">Успешное удаление</response>
+        /// <response code="500">Внутренняя ошибка сервера</response>
         [HttpDelete]
         [Route("{eventId}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteEvent([FromRoute] Guid eventId)
         {

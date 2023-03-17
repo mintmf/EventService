@@ -7,7 +7,7 @@ using SC.Internship.Common.ScResult;
 namespace EventService.Features.AuthorizationFeature
 {
     /// <summary>
-    /// 
+    /// Контроллер аутентификации
     /// </summary>
     [ApiController]
     [Route("stub")]
@@ -16,7 +16,7 @@ namespace EventService.Features.AuthorizationFeature
         private readonly IMediator _mediatr;
 
         /// <summary>
-        /// 
+        /// Конструктор
         /// </summary>
         /// <param name="mediator"></param>
         public AuthorizationController(IMediator mediator)
@@ -25,11 +25,15 @@ namespace EventService.Features.AuthorizationFeature
         }
 
         /// <summary>
-        /// 
+        /// Аутентификация
         /// </summary>
-        /// <returns>401</returns>
+        /// <returns>Результат аутентификации</returns>
+        /// <response code="200">Успех</response>
+        /// <response code="401">Неуспех</response>
         [Route("authstub")]
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize]
         public async Task<ScResult> Authorize()
         {

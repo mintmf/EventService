@@ -31,8 +31,9 @@ namespace EventService.Features.TicketFeature
         /// <summary>
         /// Создание бесплатных билетов
         /// </summary>
-        /// <returns></returns>
-        /// <response></response>
+        /// <returns>Список билетов</returns>
+        /// <response code="200">Успех</response>
+        /// <response code="500">Внутренняя ошибка</response>
         [HttpPost]
         [Route("tickets")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -49,8 +50,9 @@ namespace EventService.Features.TicketFeature
         /// </summary>
         /// <param name="parameters">ID пользователя</param>
         /// <param name="ticketId">ID билета</param>
-        /// <returns></returns>
-        /// <response></response>
+        /// <returns>Билет</returns>
+        /// <response code="200">Успех</response>
+        /// <response code="500">Внутренняя ошибка</response>
         [HttpPost]
         [Route("tickets/{ticketId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -67,8 +69,9 @@ namespace EventService.Features.TicketFeature
         /// </summary>
         /// <param name="userId">ID пользователя</param>
         /// <param name="eventId">ID мероприятия</param>
-        /// <returns></returns>
-        /// <response></response>
+        /// <returns>true или false</returns>
+        /// <response code="200">Успех</response>
+        /// <response code="500">Внутренняя ошибка</response>
         [HttpGet]
         [Route("tickets/check")]
         [ProducesResponseType(StatusCodes.Status200OK)]
