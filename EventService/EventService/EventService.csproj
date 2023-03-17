@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SC.Internship.Common\SC.Internship.Common\SC.Internship.Common.csproj" />
     <ProjectReference Include="..\SC.Internship.Common\SC.Internship.Common\SC.Internship.Common.csproj" />
   </ItemGroup>
 
