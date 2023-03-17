@@ -7,7 +7,7 @@ namespace EventService.ObjectStorage
     /// </summary>
     public class EventRepository : IEventRepository
     {
-        private static readonly List<Event> Events = new List<Event>();
+        private static readonly List<Event> Events = new();
 
         /// <summary>
         /// Добавление мероприятия

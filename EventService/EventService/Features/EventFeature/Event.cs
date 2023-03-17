@@ -1,4 +1,7 @@
-﻿namespace EventService.Features.EventFeature
+﻿using EventService.Features.TicketFeature;
+using JetBrains.Annotations;
+
+namespace EventService.Features.EventFeature
 {
     /// <summary>
     /// Мероприятия
@@ -23,11 +26,13 @@
         /// <summary>
         /// Название мероприятия
         /// </summary>
+        [UsedImplicitly]
         public string? Name { get; set; }
 
         /// <summary>
         /// Описания мероприятия
         /// </summary>
+        [UsedImplicitly]
         public string? Description { get; set; }
 
         /// <summary>
@@ -43,6 +48,6 @@
         /// <summary>
         /// Билеты на мероприятие
         /// </summary>
-        public List<EventTicket>? Tickets { get; set; }
+        public List<Ticket>? Tickets { get; set; }
     }
 }

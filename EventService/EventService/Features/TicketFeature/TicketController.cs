@@ -1,33 +1,63 @@
 ﻿using EventService.Features.TicketFeature.AddFreeTickets;
+using EventService.Features.TicketFeature.CheckIfUserHasATicket;
 using EventService.Features.TicketFeature.GiveUserATicket;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SC.Internship.Common.ScResult;
 
 namespace EventService.Features.TicketFeature
 {
-    public class TicketController : Controller
+    /// <summary>
+    /// Контроллер билетов
+    /// </summary>
+    [ApiController]
+    public class TicketController : ControllerBase
     {
+        private readonly IMediator _mediator;
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="mediator"></param>
+        public TicketController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
         /// <summary>
         /// Создание бесплатных билетов
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Список билетов</returns>
+        /// <response code="200">Успех</response>
+        /// <response code="500">Внутренняя ошибка</response>
         [HttpPost]
         [Route("tickets")]
-        public async Task<IActionResult> AddFreeTickets([FromBody] AddFreeTicketsParameters parameters)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ScResult<List<Ticket>>> AddFreeTickets([FromBody] AddFreeTicketsParameters parameters)
         {
-            return Ok();
+            var result = await _mediator.Send(new AddFreeTicketsCommand { Parameters = parameters });
+
+            return result;
         }
 
         /// <summary>
         /// Выдача пользователю билета
         /// </summary>
-        /// <param name="parameters"></param>
-        /// <param name="ticketId"></param>
-        /// <returns></returns>
+        /// <param name="parameters">ID пользователя</param>
+        /// <param name="ticketId">ID билета</param>
+        /// <returns>Билет</returns>
+        /// <response code="200">Успех</response>
+        /// <response code="500">Внутренняя ошибка</response>
         [HttpPost]
         [Route("tickets/{ticketId}")]
-        public async Task<IActionResult> GiveUserATicket([FromRoute] Guid ticketId, [FromBody] GiveUserATicketParameters parameters)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ScResult<Ticket>> GiveUserATicket([FromRoute] Guid ticketId, [FromBody] GiveUserATicketParameters parameters)
         {
-            return Ok();
+            var result = await _mediator.Send(new GiveUserATicketCommand { Parameters = parameters });
+
+            return result;
         }
 
         /// <summary>
@@ -35,12 +65,18 @@ namespace EventService.Features.TicketFeature
         /// </summary>
         /// <param name="userId">ID пользователя</param>
         /// <param name="eventId">ID мероприятия</param>
-        /// <returns></returns>
+        /// <returns>true или false</returns>
+        /// <response code="200">Успех</response>
+        /// <response code="500">Внутренняя ошибка</response>
         [HttpGet]
         [Route("tickets/check")]
-        public async Task<IActionResult> CheckIfUserHasATicket([FromRoute] Guid userId, [FromRoute] Guid eventId)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ScResult<bool>> CheckIfUserHasATicket([FromRoute] Guid userId, [FromRoute] Guid eventId)
         {
-            return Ok();
+            var result = await _mediator.Send(new CheckIfUserHasATicketCommand { UserId = userId, EventId = eventId });
+
+            return result;
         }
     }
 }

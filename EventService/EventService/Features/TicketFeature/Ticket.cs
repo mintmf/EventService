@@ -1,9 +1,11 @@
-﻿namespace EventService.Features.EventFeature
+﻿using JetBrains.Annotations;
+
+namespace EventService.Features.TicketFeature
 {
     /// <summary>
     /// Билет на мероприятие
     /// </summary>
-    public class EventTicket
+    public class Ticket
     {
         /// <summary>
         /// ID билета
@@ -18,6 +20,8 @@
         /// <summary>
         /// Место (опционально)
         /// </summary>
+
+        [UsedImplicitly]
         public string? Place { get; set; }
     }
 }

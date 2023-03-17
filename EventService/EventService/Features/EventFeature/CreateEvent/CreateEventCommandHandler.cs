@@ -1,41 +1,46 @@
 ﻿using EventService.ObjectStorage;
 using FluentValidation;
-using FluentValidation.Results;
+using JetBrains.Annotations;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+using SC.Internship.Common.ScResult;
 
 namespace EventService.Features.EventFeature.CreateEvent
 {
-    public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, CreateEventResult>
+    /// <summary>
+    /// Класс обработчика команды создания нового мероприятия
+    /// </summary>
+    [UsedImplicitly]
+    public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, ScResult<Event>>
     {
         private readonly IEventRepository _eventRepository;
         private readonly IValidator<Event> _validator;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="eventRepository"></param>
+        /// <param name="validator"></param>
         public CreateEventCommandHandler(IEventRepository eventRepository, IValidator<Event> validator)
         {
             _eventRepository = eventRepository;
             _validator = validator;
         }
-        public async Task<CreateEventResult> Handle(CreateEventCommand command, CancellationToken cancellationToken)
-        {
-            var validationResult = await _validator.ValidateAsync(command.Event);
 
-            if (!validationResult.IsValid)
-            {
-                return new CreateEventResult
-                {
-                    Event = null,
-                    ValidationResult = validationResult
-                };
-            }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<ScResult<Event>> Handle(CreateEventCommand command, CancellationToken cancellationToken)
+        {
+            await _validator.ValidateAndThrowAsync(command.Event, cancellationToken);
                 
             var createdEvent = await _eventRepository.AddEventAsync(command.Event);
 
-            return new CreateEventResult
+            return new ScResult<Event>
             {
-                Event = createdEvent,
-                ValidationResult = validationResult
+                Result = createdEvent
             };
         }
     }
