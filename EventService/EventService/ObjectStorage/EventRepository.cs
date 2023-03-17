@@ -1,4 +1,7 @@
 ﻿using EventService.Features.EventFeature;
+using EventService.Features.TicketFeature;
+using Microsoft.Extensions.Logging;
+using SC.Internship.Common.Exceptions;
 
 namespace EventService.ObjectStorage
 {
@@ -70,6 +73,32 @@ namespace EventService.ObjectStorage
         public async Task<List<Event>> GetEventListAsync()
         {
             return await Task.FromResult(Events);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <param name="tickets"></param>
+        /// <returns></returns>
+        /// <exception cref="ScException"></exception>
+        public async Task AddTicketsToAnEventAsync(Guid eventId, List<Ticket> tickets)
+        {
+            var foundEvent = Events.Find(x => x.EventId == eventId);
+
+            if (foundEvent == null)
+            {
+                throw new ScException("Мероприятие не найдено");
+            }
+
+            if (foundEvent.Tickets == null)
+            {
+                foundEvent.Tickets = tickets;
+            }
+
+            foundEvent.Tickets.AddRange(tickets);
+
+            await Task.CompletedTask;
         }
     }
 }

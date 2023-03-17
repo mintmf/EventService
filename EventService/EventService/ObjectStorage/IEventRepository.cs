@@ -1,4 +1,5 @@
 ﻿using EventService.Features.EventFeature;
+using EventService.Features.TicketFeature;
 
 namespace EventService.ObjectStorage
 {
@@ -34,5 +35,13 @@ namespace EventService.ObjectStorage
         /// </summary>
         /// <returns></returns>
         Task<List<Event>> GetEventListAsync();
+
+        /// <summary>
+        /// Добавить бесплатные билеты на мероприятие
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <param name="tickets"></param>
+        /// <returns></returns>
+        Task AddTicketsToAnEventAsync(Guid eventId, List<Ticket> tickets);
     }
 }
