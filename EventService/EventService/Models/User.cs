@@ -1,14 +1,18 @@
-﻿namespace EventService.Models
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace EventService.Models
 {
     /// <summary>
     /// Класс пользователя
     /// </summary>
+    [SuppressMessage("ReSharper", "All")] // Пока класс не используется
     public class User
     {
         /// <summary>
         /// ID пользователя
         /// </summary>
-        public Guid Id { get; set; }
+        
+        public Guid UserId { get; set; }
 
         /// <summary>
         /// Ник пользователя

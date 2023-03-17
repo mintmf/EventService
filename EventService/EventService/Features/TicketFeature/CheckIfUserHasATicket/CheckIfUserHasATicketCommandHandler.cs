@@ -1,4 +1,5 @@
 ﻿using EventService.ObjectStorage;
+using JetBrains.Annotations;
 using MediatR;
 using SC.Internship.Common.ScResult;
 
@@ -7,6 +8,7 @@ namespace EventService.Features.TicketFeature.CheckIfUserHasATicket
     /// <summary>
     /// Класс обработчика команды проверки на то, есть ли у пользователя билет
     /// </summary>
+    [UsedImplicitly]
     public class CheckIfUserHasATicketCommandHandler : IRequestHandler<CheckIfUserHasATicketCommand, ScResult<bool>>
     {
         private readonly ITicketRepository _ticketRepository;

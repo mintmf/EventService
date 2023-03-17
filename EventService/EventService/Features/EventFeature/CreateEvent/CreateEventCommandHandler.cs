@@ -1,9 +1,7 @@
 ﻿using EventService.ObjectStorage;
 using FluentValidation;
-using FluentValidation.Results;
+using JetBrains.Annotations;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using SC.Internship.Common.ScResult;
 
 namespace EventService.Features.EventFeature.CreateEvent
@@ -11,6 +9,7 @@ namespace EventService.Features.EventFeature.CreateEvent
     /// <summary>
     /// Класс обработчика команды создания нового мероприятия
     /// </summary>
+    [UsedImplicitly]
     public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, ScResult<Event>>
     {
         private readonly IEventRepository _eventRepository;

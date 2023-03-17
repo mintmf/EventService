@@ -1,4 +1,5 @@
 ﻿using EventService.Features.TicketFeature;
+using JetBrains.Annotations;
 
 namespace EventService.Features.EventFeature
 {
@@ -25,11 +26,13 @@ namespace EventService.Features.EventFeature
         /// <summary>
         /// Название мероприятия
         /// </summary>
+        [UsedImplicitly]
         public string? Name { get; set; }
 
         /// <summary>
         /// Описания мероприятия
         /// </summary>
+        [UsedImplicitly]
         public string? Description { get; set; }
 
         /// <summary>

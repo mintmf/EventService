@@ -1,4 +1,5 @@
 ﻿using EventService.ObjectStorage;
+using JetBrains.Annotations;
 using MediatR;
 using SC.Internship.Common.ScResult;
 
@@ -7,6 +8,7 @@ namespace EventService.Features.TicketFeature.GiveUserATicket
     /// <summary>
     /// 
     /// </summary>
+    [UsedImplicitly]
     public class GiveUserATicketCommandHandler : IRequestHandler<GiveUserATicketCommand, ScResult<Ticket>>
     {
         private readonly ITicketRepository _ticketRepository;

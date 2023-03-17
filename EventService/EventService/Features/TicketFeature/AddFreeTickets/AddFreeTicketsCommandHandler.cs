@@ -1,4 +1,5 @@
 ﻿using EventService.ObjectStorage;
+using JetBrains.Annotations;
 using MediatR;
 using SC.Internship.Common.ScResult;
 
@@ -7,6 +8,7 @@ namespace EventService.Features.TicketFeature.AddFreeTickets
     /// <summary>
     /// 
     /// </summary>
+    [UsedImplicitly]
     public class AddFreeTicketsCommandHandler : IRequestHandler<AddFreeTicketsCommand, ScResult<List<Ticket>>>
     {
         private readonly ITicketRepository _ticketRepository;

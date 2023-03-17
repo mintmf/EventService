@@ -1,7 +1,6 @@
 ﻿using EventService.Features.TicketFeature.AddFreeTickets;
 using EventService.Features.TicketFeature;
 using EventService.Features.TicketFeature.GiveUserATicket;
-using SC.Internship.Common.ScResult;
 
 namespace EventService.ObjectStorage
 {

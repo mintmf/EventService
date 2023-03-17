@@ -1,7 +1,6 @@
 ﻿using EventService.Features.TicketFeature.AddFreeTickets;
 using EventService.Features.TicketFeature.CheckIfUserHasATicket;
 using EventService.Features.TicketFeature.GiveUserATicket;
-using EventService.ObjectStorage;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SC.Internship.Common.ScResult;
@@ -14,17 +13,14 @@ namespace EventService.Features.TicketFeature
     [ApiController]
     public class TicketController : ControllerBase
     {
-        private readonly ITicketRepository _ticketRepository;
         private readonly IMediator _mediator;
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="ticketRepository"></param>
         /// <param name="mediator"></param>
-        public TicketController(ITicketRepository ticketRepository, IMediator mediator)
+        public TicketController(IMediator mediator)
         {
-            _ticketRepository = ticketRepository;
             _mediator = mediator;
         }
 

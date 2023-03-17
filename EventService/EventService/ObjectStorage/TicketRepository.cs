@@ -1,5 +1,4 @@
-﻿using EventService.Features.EventFeature;
-using EventService.Features.TicketFeature;
+﻿using EventService.Features.TicketFeature;
 using EventService.Features.TicketFeature.AddFreeTickets;
 using EventService.Features.TicketFeature.GiveUserATicket;
 
@@ -10,7 +9,8 @@ namespace EventService.ObjectStorage
     /// </summary>
     public class TicketRepository : ITicketRepository
     {
-        private static readonly List<Ticket> Tickets = new List<Ticket>();
+        // ReSharper disable once CollectionNeverUpdated.Local
+        private static readonly List<Ticket> Tickets = new();
         
         private readonly IEventRepository _eventRepository;
 

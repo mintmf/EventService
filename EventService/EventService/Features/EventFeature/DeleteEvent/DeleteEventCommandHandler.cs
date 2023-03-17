@@ -1,12 +1,13 @@
 ﻿using EventService.ObjectStorage;
+using JetBrains.Annotations;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace EventService.Features.EventFeature.DeleteEvent
 {
     /// <summary>
     /// 
     /// </summary>
+    [UsedImplicitly]
     public class DeleteEventCommandHandler : IRequestHandler<DeleteEventCommand>
     {
         private readonly IEventRepository _eventRepository;

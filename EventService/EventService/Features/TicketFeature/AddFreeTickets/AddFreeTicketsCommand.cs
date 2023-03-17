@@ -9,8 +9,16 @@ namespace EventService.Features.TicketFeature.AddFreeTickets
     public class AddFreeTicketsCommand : IRequest<ScResult<List<Ticket>>>
     {
         /// <summary>
+        /// 
+        /// </summary>
+        public AddFreeTicketsCommand()
+        {
+            Parameters = new AddFreeTicketsParameters();
+        }
+
+        /// <summary>
         /// Параметры
         /// </summary>
-        public AddFreeTicketsParameters? Parameters { get; set; }
+        public AddFreeTicketsParameters Parameters { get; set; }
     }
 }

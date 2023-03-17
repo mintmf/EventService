@@ -1,12 +1,15 @@
 ﻿using EventService.Services;
+using JetBrains.Annotations;
 using MediatR;
 using SC.Internship.Common.ScResult;
 
 namespace EventService.Features.AuthorizationFeature.Authorize
 {
     /// <summary>
-    /// 
+    /// Класс обработчика команды аутентификации
     /// </summary>
+
+    [UsedImplicitly]
     public class AuthorizeCommandHandler : IRequestHandler<AuthorizeCommand, ScResult>
     {
         private readonly IAuthorizationService _authorizationService;
@@ -21,7 +24,7 @@ namespace EventService.Features.AuthorizationFeature.Authorize
         }
 
         /// <summary>
-        /// 
+        /// Обработчик команды аутентификации
         /// </summary>
         /// <param name="request"></param>
         /// <param name="cancellationToken"></param>

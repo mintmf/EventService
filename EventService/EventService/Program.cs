@@ -62,7 +62,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title="Event API", Version = "V1" } );
     c.EnableAnnotations();
-    c.IncludeXmlComments($@"{System.AppDomain.CurrentDomain.BaseDirectory}\EventService.xml");
+    c.IncludeXmlComments($@"{AppDomain.CurrentDomain.BaseDirectory}\EventService.xml");
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {

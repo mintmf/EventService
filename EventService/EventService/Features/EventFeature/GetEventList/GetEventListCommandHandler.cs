@@ -1,12 +1,13 @@
 ﻿using EventService.ObjectStorage;
 using MediatR;
-using EventService.Features.EventFeature.DeleteEvent;
+using JetBrains.Annotations;
 
 namespace EventService.Features.EventFeature.GetEventList
 {
     /// <summary>
     /// Класс обработчика команды получения списка всех мероприятий
     /// </summary>
+    [UsedImplicitly]
     public class GetEventListCommandHandler : IRequestHandler<GetEventListCommand, List<Event>>
     {
         private readonly IEventRepository _eventRepository;
