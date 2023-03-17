@@ -1,6 +1,7 @@
 ﻿using EventService.Features.TicketFeature;
 using EventService.Features.TicketFeature.AddFreeTickets;
 using EventService.Features.TicketFeature.GiveUserATicket;
+using SC.Internship.Common.Exceptions;
 
 namespace EventService.ObjectStorage
 {
@@ -30,22 +31,16 @@ namespace EventService.ObjectStorage
         /// <returns></returns>
         public async Task<List<Ticket>> AddFreeTicketsAsync(AddFreeTicketsParameters parameters)
         {
-            var events = await _eventRepository.GetEventListAsync();
             var newTickets = new List<Ticket>();
 
             for (var i = 0; i < parameters.NumberOfTickets; i++)
             {
-                newTickets.Add(new Ticket());
+                newTickets.Add(new Ticket { Id = Guid.NewGuid() });
             }
 
-            var e = events.Find(x => x.EventId == parameters.EventId);
+            Tickets.AddRange(newTickets);
 
-            if (e == null)
-            {
-
-            }
-
-            e?.Tickets?.AddRange(newTickets);
+            await _eventRepository.AddTicketsToAnEventAsync(parameters.EventId, newTickets);
 
             return await Task.FromResult(newTickets);
         }
@@ -54,16 +49,16 @@ namespace EventService.ObjectStorage
         /// Дать пользователю билет
         /// </summary>
         /// <returns></returns>
-        public async Task<Ticket> GiveUserAticketAsync(Guid ticketId, GiveUserATicketParameters? parameters)
+        public async Task<Ticket> GiveUserAticketAsync(Guid ticketId, GiveUserATicketParameters parameters)
         {
             var ticket = Tickets.Find(t => t.Id == ticketId);
 
             if (ticket == null)
             {
-                return await Task.FromResult(new Ticket());
+                throw new ScException("Такого билета не существует");
             }
 
-            if (parameters != null) ticket.Owner = parameters.UserId;
+            ticket.Owner = parameters.UserId;
 
             return await Task.FromResult(ticket);
         }
@@ -76,16 +71,16 @@ namespace EventService.ObjectStorage
         {
             var events = await _eventRepository.GetEventListAsync();
 
-            var ticket = events.Find(e => e.EventId == eventId);
+            var foundEvent = events.Find(e => e.EventId == eventId);
 
-            if (ticket == null)
+            if (foundEvent == null)
             {
-                return false;
+                throw new ScException("Такого мероприятия не существует");
             }
 
-            var a = ticket.Tickets?.Find(t => t.Owner == userId);
+            var ticketOwner = foundEvent.Tickets?.Find(t => t.Owner == userId);
 
-            return a != null;
+            return ticketOwner != null;
         }
     }
 }

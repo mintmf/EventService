@@ -8,7 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["EventService/EventService.csproj", "EventService/"]
-COPY ["EventService/SC.Internship.Common/SC.Internship.Common/SC.Internship.Common.csproj", "EventService/SC.Internship.Common/SC.Internship.Common/"]
+COPY ["SC.Internship.Common/SC.Internship.Common/SC.Internship.Common.csproj", "SC.Internship.Common/SC.Internship.Common/"]
 RUN dotnet restore "EventService/EventService.csproj"
 COPY . .
 WORKDIR "/src/EventService"
