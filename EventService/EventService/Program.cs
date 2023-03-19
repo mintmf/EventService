@@ -9,6 +9,12 @@ using EventService.Models.Configs;
 using EventService.ObjectStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text.Json;
+using System.Security.Claims;
+using IdentityServer4.AccessTokenValidation;
+using Microsoft.VisualBasic;
+using IdentityModel.AspNetCore.OAuth2Introspection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,31 +35,29 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+var identityServerConfig = builder.Configuration.GetSection("IdentityServer").Get<IdentityServerConfig>();
+
+builder.Services.AddAuthentication(OAuth2IntrospectionDefaults.AuthenticationScheme)
+    .AddOAuth2Introspection(options =>
     {
-        options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            // укзывает, будет ли валидироваться издатель при валидации токена
-            ValidateIssuer = false,
-            // строка, представляющая издателя
-            ValidIssuer = "",
-
-            // будет ли валидироваться потребитель токена
-            ValidateAudience = false,
-            // установка потребителя токена
-            ValidAudience = "",
-            // будет ли валидироваться время существования
-            ValidateLifetime = false,
-
-            // установка ключа безопасности
-            //IssuerSigningKey = new SymmetricSecurityKey(null),
-            // валидация ключа безопасности
-            ValidateIssuerSigningKey = false
-        };
-        options.Authority = "";
+        options.Authority = identityServerConfig?.Authority;
+        options.ClientId = "spaWeb";
+        options.ClientSecret = "hardtoguess";
     });
+    /*.AddIdentityServerAuthentication(options =>
+    {
+        options.Authority = "http://127.0.0.1:5000";
+        options.ApiSecret = "web-api-secret";
+        options.ApiName = "spaWeb";
+    });*/
+/*.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddIdentityServerAuthentication(
+options =>
+{
+    options.Authority = "http://127.0.0.1:5000";
+    options.SupportedTokens = SupportedTokens.Reference;
+    options.RequireHttpsMetadata = false;
+});*/
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -69,7 +73,7 @@ builder.Services.AddSwaggerGen(c =>
         In = ParameterLocation.Header,
         Description = "Please insert JWT with Bearer into field",
         BearerFormat = "JWT",
-        Scheme = "bearer",
+        Scheme = "Bearer",
         Name = "Authorization",
         Type = SecuritySchemeType.ApiKey
     });
