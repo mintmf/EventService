@@ -8,12 +8,12 @@
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="address"></param>
+        /// <param name="issuer"></param>
         /// <param name="authority"></param>
         /// <param name="audience"></param>
-        public IdentityServerConfig(string address, string authority, string audience)
+        public IdentityServerConfig(string issuer, string authority, string audience)
         {
-            Address = address;
+            Issuer = issuer;
             Authority = authority;
             Audience = audience;
         }
@@ -21,7 +21,7 @@
         /// <summary>
         /// Адрес
         /// </summary>
-        public string Address { get; set; }
+        public string Issuer { get; set; }
 
         /// <summary>
         /// Authority
