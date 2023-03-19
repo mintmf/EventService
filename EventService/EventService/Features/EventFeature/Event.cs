@@ -49,5 +49,14 @@ namespace EventService.Features.EventFeature
         /// Билеты на мероприятие
         /// </summary>
         public List<Ticket>? Tickets { get; set; }
+
+        /// <summary>
+        /// Максимальное число билетов
+        /// </summary>
+        public int MaxNumberOfTickets { get; set; }
+        /// <summary>
+        /// Проверить, есть ли доступные билеты
+        /// </summary>
+        public bool PlacesAvailable { get; set; }
     }
 }
