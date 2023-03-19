@@ -9,6 +9,7 @@ using EventService.Models.Configs;
 using EventService.ObjectStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,9 +94,10 @@ builder.Services.AddScoped<ISpaceService, SpaceService>();
 builder.Services.AddScoped<IValidator<Event>, CreateEventValidator>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+builder.Services.AddScoped<IMongoClient, EventsMongoClient>();
 
-
-builder.Services.Configure<IdentityServerConfig>(builder.Configuration.GetSection("IdentityServerConfig")); 
+builder.Services.Configure<IdentityServerConfig>(builder.Configuration.GetSection("IdentityServerConfig"));
+builder.Services.Configure<EventsMongoConfig>(builder.Configuration.GetSection("MongoParameters"));
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 

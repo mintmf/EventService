@@ -6,6 +6,7 @@ using EventService.Filters;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using SC.Internship.Common.ScResult;
+using EventService.Features.EventFeature.CheckIfPlaceIsAvailable;
 
 namespace EventService.Features.EventFeature
 {
@@ -98,6 +99,21 @@ namespace EventService.Features.EventFeature
             await _mediatr.Send(new DeleteEventCommand(eventId));
 
             return StatusCode(StatusCodes.Status204NoContent);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="place"></param>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{place}&{eventId}")]
+        public async Task<ScResult<bool>> CheckPlace([FromRoute] int place, [FromRoute] Guid eventId)
+        {
+            var result = await _mediatr.Send(new CheckIfPlaceIsAvailableCommand { Place = place, EventId = eventId });
+
+            return result;
         }
     }
 }

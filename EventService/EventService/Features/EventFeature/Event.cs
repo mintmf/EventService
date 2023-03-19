@@ -1,11 +1,13 @@
 ﻿using EventService.Features.TicketFeature;
 using JetBrains.Annotations;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace EventService.Features.EventFeature
 {
     /// <summary>
     /// Мероприятия
     /// </summary>
+    [BsonIgnoreExtraElements]
     public class Event
     {
         /// <summary>
@@ -51,11 +53,7 @@ namespace EventService.Features.EventFeature
         public List<Ticket>? Tickets { get; set; }
 
         /// <summary>
-        /// Максимальное число билетов
-        /// </summary>
-        public int MaxNumberOfTickets { get; set; }
-        /// <summary>
-        /// Проверить, есть ли доступные билеты
+        /// Есть ли места
         /// </summary>
         public bool PlacesAvailable { get; set; }
     }

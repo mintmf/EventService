@@ -2,6 +2,8 @@
 using EventService.Features.TicketFeature;
 using Microsoft.Extensions.Logging;
 using SC.Internship.Common.Exceptions;
+using MongoDB.Driver;
+using MongoDB.Bson;
 
 namespace EventService.ObjectStorage
 {
@@ -10,7 +12,18 @@ namespace EventService.ObjectStorage
     /// </summary>
     public class EventRepository : IEventRepository
     {
+        private readonly IMongoClient _mongoClient;
+
         private static readonly List<Event> Events = new();
+
+        /// <summary>
+        /// Конструктор репозитория мероприятий
+        /// </summary>
+        /// <param name="mongoClient"></param>
+        public EventRepository(IMongoClient mongoClient)
+        {
+            _mongoClient = mongoClient;
+        }
 
         /// <summary>
         /// Добавление мероприятия
@@ -20,10 +33,17 @@ namespace EventService.ObjectStorage
         public async Task<Event> AddEventAsync(Event sourceEvent)
         {
             sourceEvent.EventId = Guid.NewGuid();
+            //sourceEvent.PlacesAvailable = false;
 
             Events.Add(sourceEvent);
 
-            return await Task.FromResult(sourceEvent);
+            BsonDocument bson = sourceEvent.ToBsonDocument();
+
+            var db = _mongoClient.GetDatabase("event_database");
+            var collection = db.GetCollection<Event>("events");
+            await collection.InsertOneAsync(sourceEvent);
+
+            return sourceEvent;
         }
 
         /// <summary>
@@ -72,7 +92,13 @@ namespace EventService.ObjectStorage
         /// <returns></returns>
         public async Task<List<Event>> GetEventListAsync()
         {
-            return await Task.FromResult(Events);
+            var db = _mongoClient.GetDatabase("event_database");
+            var collection = db.GetCollection<Event>("events");
+            var events = await collection.Find(new BsonDocument()).ToListAsync();
+
+            return events;
+
+            //return await Task.FromResult(Events);
         }
 
         /// <summary>
@@ -91,14 +117,69 @@ namespace EventService.ObjectStorage
                 throw new ScException("Мероприятие не найдено");
             }
 
-            if (foundEvent.Tickets == null)
+            if (foundEvent.Tickets == null && foundEvent.PlacesAvailable == true)
             {
-                foundEvent.Tickets = tickets;
+                foundEvent.Tickets = new List<Ticket>();
+
+                for (int i = 0; i < tickets.Count; i++)
+                {
+                    tickets[i].Place = i;
+                    foundEvent.Tickets.Add(tickets[i]);
+                }
+
+                //foundEvent.Tickets = tickets;
+                //foundEvent.PlacesAvailable = true;
             }
 
-            foundEvent.Tickets.AddRange(tickets);
+            foundEvent.Tickets = tickets;
+
+            //foundEvent.Tickets.AddRange(tickets);
 
             await Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Проверить номер места на мероприятие
+        /// </summary>
+        /// <param name="place"></param>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
+        public async Task<bool> CheckIfPlaceIsAvailable(int place, Guid eventId)
+        {
+            var db = _mongoClient.GetDatabase("event_database");
+            var collection = db.GetCollection<Event>("events");
+            var events = await collection.Find(new BsonDocument()).ToListAsync();
+
+            var foundEvent = events.Find(x => x.EventId == eventId);
+
+            if (foundEvent == null)
+            {
+                throw new ScException("Такого мероприятия не существует");
+            }
+
+            if(foundEvent.PlacesAvailable == false)
+            {
+                throw new ScException("У билетов для этого мероприятия нет мест");
+            }
+
+            if (foundEvent.Tickets == null)
+            {
+                throw new ScException("Для этого мероприятия нет билетов");
+            }
+
+            var foundTicket = foundEvent.Tickets.Find(p => p.Place == place);
+
+            if (foundTicket == null)
+            {
+                throw new ScException("Билета с таким местом не существует");
+            }
+
+            if (foundTicket?.Owner != Guid.Empty)
+            {
+                return false;
+            }
+
+            return await Task.FromResult(true);
         }
     }
 }

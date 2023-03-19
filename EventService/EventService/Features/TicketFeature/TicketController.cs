@@ -57,7 +57,7 @@ namespace EventService.Features.TicketFeature
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ScResult<Ticket>> GiveUserATicket([FromRoute] Guid ticketId, [FromBody] GiveUserATicketParameters parameters)
         {
-            var result = await _mediator.Send(new GiveUserATicketCommand { TicketId = ticketId, Parameters = parameters });
+            var result = await _mediator.Send(new GiveUserATicketCommand(parameters) { TicketId = ticketId });
 
             return result;
         }
