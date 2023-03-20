@@ -11,11 +11,17 @@
         /// <param name="issuer"></param>
         /// <param name="authority"></param>
         /// <param name="audience"></param>
-        public IdentityServerConfig(string issuer, string authority, string audience)
+        /// <param name="introspectionEndpoint"></param>
+        /// <param name="clientId"></param>
+        /// <param name="clientSecret"></param>
+        public IdentityServerConfig(string issuer, string authority, string audience, string introspectionEndpoint, string clientId, string clientSecret)
         {
             Issuer = issuer;
             Authority = authority;
             Audience = audience;
+            IntrospectionEndpoint = introspectionEndpoint;
+            ClientId = clientId;
+            ClientSecret = clientSecret;
         }
 
         /// <summary>
@@ -32,5 +38,20 @@
         /// Audince
         /// </summary>
         public string Audience { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string IntrospectionEndpoint { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ClientId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ClientSecret { get; set; }
     }
 }

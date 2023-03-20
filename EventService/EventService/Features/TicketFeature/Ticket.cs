@@ -22,6 +22,6 @@ namespace EventService.Features.TicketFeature
         /// </summary>
 
         [UsedImplicitly]
-        public string? Place { get; set; }
+        public int? Place { get; set; }
     }
 }

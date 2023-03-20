@@ -6,7 +6,7 @@ using SC.Internship.Common.ScResult;
 namespace EventService.Features.TicketFeature.GiveUserATicket
 {
     /// <summary>
-    /// 
+    /// Класс обработчика события выдачи пользователю билета
     /// </summary>
     [UsedImplicitly]
     public class GiveUserATicketCommandHandler : IRequestHandler<GiveUserATicketCommand, ScResult<Ticket>>

@@ -1,20 +1,13 @@
 using FluentValidation;
 using EventService.Features.EventFeature;
-using EventService.Features.EventFeature.CreateEvent;
 using EventService.Services;
 using Microsoft.OpenApi.Models;
 using EventRepository = EventService.ObjectStorage.EventRepository;
 using IEventRepository = EventService.ObjectStorage.IEventRepository;
 using EventService.Models.Configs;
 using EventService.ObjectStorage;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text.Json;
-using System.Security.Claims;
-using IdentityServer4.AccessTokenValidation;
-using Microsoft.VisualBasic;
 using IdentityModel.AspNetCore.OAuth2Introspection;
+using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,26 +34,12 @@ builder.Services.AddAuthentication(OAuth2IntrospectionDefaults.AuthenticationSch
     .AddOAuth2Introspection(options =>
     {
         options.Authority = identityServerConfig?.Authority;
-        options.ClientId = "spaWeb";
-        options.ClientSecret = "hardtoguess";
+        options.ClientId = identityServerConfig?.ClientId;
+        options.ClientSecret = identityServerConfig?.ClientSecret;
+        options.IntrospectionEndpoint = identityServerConfig?.IntrospectionEndpoint;
     });
-    /*.AddIdentityServerAuthentication(options =>
-    {
-        options.Authority = "http://127.0.0.1:5000";
-        options.ApiSecret = "web-api-secret";
-        options.ApiName = "spaWeb";
-    });*/
-/*.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddIdentityServerAuthentication(
-options =>
-{
-    options.Authority = "http://127.0.0.1:5000";
-    options.SupportedTokens = SupportedTokens.Reference;
-    options.RequireHttpsMetadata = false;
-});*/
 
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -94,12 +73,12 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<ISpaceService, SpaceService>();
-builder.Services.AddScoped<IValidator<Event>, CreateEventValidator>();
+builder.Services.AddScoped<IValidator<Event>, EventValidator>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
-
-
-builder.Services.Configure<IdentityServerConfig>(builder.Configuration.GetSection("IdentityServerConfig")); 
+builder.Services.AddScoped<IMongoClient, EventsMongoClient>();
+builder.Services.Configure<IdentityServerConfig>(builder.Configuration.GetSection("IdentityServerConfig"));
+builder.Services.Configure<EventsMongoConfig>(builder.Configuration.GetSection("MongoParameters"));
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
@@ -112,7 +91,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(c => 
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Event Service");
+    c.RoutePrefix = String.Empty;
+});
 
 app.UseHttpsRedirection();
 

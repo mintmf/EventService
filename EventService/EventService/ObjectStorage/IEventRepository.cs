@@ -43,5 +43,13 @@ namespace EventService.ObjectStorage
         /// <param name="tickets"></param>
         /// <returns></returns>
         Task AddTicketsToAnEventAsync(Guid eventId, List<Ticket> tickets);
+
+        /// <summary>
+        /// Проверить номер места на мероприятие
+        /// </summary>
+        /// <param name="place"></param>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
+        Task<bool> CheckIfPlaceIsAvailable(int place, Guid eventId);
     }
 }

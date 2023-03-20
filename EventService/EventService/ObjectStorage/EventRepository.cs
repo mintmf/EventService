@@ -1,7 +1,9 @@
 ﻿using EventService.Features.EventFeature;
 using EventService.Features.TicketFeature;
-using Microsoft.Extensions.Logging;
 using SC.Internship.Common.Exceptions;
+using MongoDB.Driver;
+using MongoDB.Bson;
+using Microsoft.Extensions.Options;
 
 namespace EventService.ObjectStorage
 {
@@ -10,7 +12,19 @@ namespace EventService.ObjectStorage
     /// </summary>
     public class EventRepository : IEventRepository
     {
-        private static readonly List<Event> Events = new();
+        private readonly IMongoClient _mongoClient;
+        private readonly EventsMongoConfig _config;
+
+        /// <summary>
+        /// Конструктор репозитория мероприятий
+        /// </summary>
+        /// <param name="mongoClient"></param>
+        /// <param name="options"></param>
+        public EventRepository(IMongoClient mongoClient, IOptions<EventsMongoConfig> options)
+        {
+            _mongoClient = mongoClient;
+            _config = options.Value;
+        }
 
         /// <summary>
         /// Добавление мероприятия
@@ -21,9 +35,12 @@ namespace EventService.ObjectStorage
         {
             sourceEvent.EventId = Guid.NewGuid();
 
-            Events.Add(sourceEvent);
+            var db = _mongoClient.GetDatabase(_config.Database);
+            var collection = db.GetCollection<Event>(_config.EventsCollection);
 
-            return await Task.FromResult(sourceEvent);
+            await collection.InsertOneAsync(sourceEvent);
+
+            return sourceEvent;
         }
 
         /// <summary>
@@ -34,17 +51,18 @@ namespace EventService.ObjectStorage
         /// <returns></returns>
         public async Task<Event> UpdateEventAsync(Guid eventId, Event sourceEvent)
         {
-            var index = Events.FindIndex(x => x.EventId == eventId);
+            var db = _mongoClient.GetDatabase(_config.Database);
+            var collection = db.GetCollection<Event>(_config.EventsCollection);
+            var updateFilter = Builders<Event>.Filter.Eq("EventId", eventId);
 
-            if (index == -1)
+            var result = await collection.ReplaceOneAsync(updateFilter, sourceEvent);
+
+            if (result.ModifiedCount == 0)
             {
-                return sourceEvent;
+                throw new ScException("Мероприятие не найдено");
             }
 
-            sourceEvent.EventId = eventId;
-            Events[index] = sourceEvent;
-
-            return await Task.FromResult(Events[index]);
+            return await Task.FromResult(sourceEvent);
         }
 
         /// <summary>
@@ -54,16 +72,18 @@ namespace EventService.ObjectStorage
         /// <returns></returns>
         public async Task<bool> DeleteEventAsync(Guid eventId)
         {
-            var foundEvent = Events.Find(x => x.EventId == eventId);
+            var db = _mongoClient.GetDatabase(_config.Database);
+            var collection = db.GetCollection<Event>(_config.EventsCollection);
+            var deleteFilter = Builders<Event>.Filter.Eq("EventId", eventId);
 
-            if (foundEvent == null)
+            var result = await collection.DeleteOneAsync(deleteFilter);
+
+            if (result.DeletedCount == 0)
             {
-                return false;
+                throw new ScException("Мероприятие не найдено");
             }
 
-            var result = Events.Remove(foundEvent);
-
-            return await Task.FromResult(result);
+            return await Task.FromResult(true);
         }
 
         /// <summary>
@@ -72,11 +92,15 @@ namespace EventService.ObjectStorage
         /// <returns></returns>
         public async Task<List<Event>> GetEventListAsync()
         {
-            return await Task.FromResult(Events);
+            var db = _mongoClient.GetDatabase(_config.Database);
+            var collection = db.GetCollection<Event>(_config.EventsCollection);
+            var events = await collection.Find(new BsonDocument()).ToListAsync();
+
+            return events;
         }
 
         /// <summary>
-        /// 
+        /// Добавить бесплатные билеты
         /// </summary>
         /// <param name="eventId"></param>
         /// <param name="tickets"></param>
@@ -84,21 +108,79 @@ namespace EventService.ObjectStorage
         /// <exception cref="ScException"></exception>
         public async Task AddTicketsToAnEventAsync(Guid eventId, List<Ticket> tickets)
         {
-            var foundEvent = Events.Find(x => x.EventId == eventId);
+            var db = _mongoClient.GetDatabase(_config.Database);
+            var collection = db.GetCollection<Event>(_config.EventsCollection);
+            var eventFilter = Builders<Event>.Filter.Eq("EventId", eventId);
 
-            if (foundEvent == null)
+            var result = await collection.Find(eventFilter).Limit(1).SingleAsync();
+            
+            if (result == null)
             {
                 throw new ScException("Мероприятие не найдено");
             }
 
+            var foundEvent = result;
             if (foundEvent.Tickets == null)
             {
-                foundEvent.Tickets = tickets;
+                foundEvent.Tickets = new List<Ticket>();
+
+                for (int i = 0; i < tickets.Count; i++)
+                {
+                    if (foundEvent.PlacesAvailable)
+                    {
+                        tickets[i].Place = i + 1;
+                    }
+                    foundEvent.Tickets.Add(tickets[i]);
+                }
+
+                await collection.ReplaceOneAsync(eventFilter, foundEvent);
             }
 
-            foundEvent.Tickets.AddRange(tickets);
-
             await Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Проверить номер места на мероприятие
+        /// </summary>
+        /// <param name="place"></param>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
+        public async Task<bool> CheckIfPlaceIsAvailable(int place, Guid eventId)
+        {
+            var db = _mongoClient.GetDatabase(_config.Database);
+            var collection = db.GetCollection<Event>(_config.EventsCollection);
+            var events = await collection.Find(new BsonDocument()).ToListAsync();
+
+            var foundEvent = events.Find(x => x.EventId == eventId);
+
+            if (foundEvent == null)
+            {
+                throw new ScException("Такого мероприятия не существует");
+            }
+
+            if (foundEvent.PlacesAvailable == false)
+            {
+                throw new ScException("У билетов для этого мероприятия нет мест");
+            }
+
+            if (foundEvent.Tickets == null)
+            {
+                throw new ScException("Для этого мероприятия нет билетов");
+            }
+
+            var foundTicket = foundEvent.Tickets.Find(p => p.Place == place);
+
+            if (foundTicket == null)
+            {
+                throw new ScException("Билета с таким местом не существует");
+            }
+
+            if (foundTicket.Owner != Guid.Empty)
+            {
+                return false;
+            }
+
+            return await Task.FromResult(true);
         }
     }
 }

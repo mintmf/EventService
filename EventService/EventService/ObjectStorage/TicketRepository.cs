@@ -82,5 +82,6 @@ namespace EventService.ObjectStorage
 
             return ticketOwner != null;
         }
+
     }
 }

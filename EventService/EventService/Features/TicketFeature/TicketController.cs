@@ -3,6 +3,7 @@ using EventService.Features.TicketFeature.CheckIfUserHasATicket;
 using EventService.Features.TicketFeature.GiveUserATicket;
 using EventService.Filters;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SC.Internship.Common.ScResult;
 
@@ -14,6 +15,7 @@ namespace EventService.Features.TicketFeature
     [ApiController]
     [Route("tickets")]
     [TypeFilter(typeof(CommonExceptionFilter))]
+    [Authorize]
     public class TicketController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -57,7 +59,7 @@ namespace EventService.Features.TicketFeature
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ScResult<Ticket>> GiveUserATicket([FromRoute] Guid ticketId, [FromBody] GiveUserATicketParameters parameters)
         {
-            var result = await _mediator.Send(new GiveUserATicketCommand { TicketId = ticketId, Parameters = parameters });
+            var result = await _mediator.Send(new GiveUserATicketCommand(parameters) { TicketId = ticketId });
 
             return result;
         }

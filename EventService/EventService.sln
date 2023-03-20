@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventService", "EventServic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SC.Internship.Common", "SC.Internship.Common\SC.Internship.Common\SC.Internship.Common.csproj", "{717FACC5-1B63-494B-A8CC-F25CD5B5C01F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventService.UnitTests", "EventService.UnitTests\EventService.UnitTests.csproj", "{D78219DD-EBD0-48EC-A28A-73D5DA101EC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{717FACC5-1B63-494B-A8CC-F25CD5B5C01F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{717FACC5-1B63-494B-A8CC-F25CD5B5C01F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{717FACC5-1B63-494B-A8CC-F25CD5B5C01F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D78219DD-EBD0-48EC-A28A-73D5DA101EC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D78219DD-EBD0-48EC-A28A-73D5DA101EC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D78219DD-EBD0-48EC-A28A-73D5DA101EC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D78219DD-EBD0-48EC-A28A-73D5DA101EC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
