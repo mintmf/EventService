@@ -1,10 +1,9 @@
 ﻿using EventService.Features.EventFeature;
 using EventService.Features.TicketFeature;
-using Microsoft.Extensions.Logging;
 using SC.Internship.Common.Exceptions;
 using MongoDB.Driver;
 using MongoDB.Bson;
-using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Options;
 
 namespace EventService.ObjectStorage
 {
@@ -14,16 +13,17 @@ namespace EventService.ObjectStorage
     public class EventRepository : IEventRepository
     {
         private readonly IMongoClient _mongoClient;
-
-        private static readonly List<Event> Events = new();
+        private readonly EventsMongoConfig _config;
 
         /// <summary>
         /// Конструктор репозитория мероприятий
         /// </summary>
         /// <param name="mongoClient"></param>
-        public EventRepository(IMongoClient mongoClient)
+        /// <param name="options"></param>
+        public EventRepository(IMongoClient mongoClient, IOptions<EventsMongoConfig> options)
         {
             _mongoClient = mongoClient;
+            _config = options.Value;
         }
 
         /// <summary>
@@ -35,10 +35,9 @@ namespace EventService.ObjectStorage
         {
             sourceEvent.EventId = Guid.NewGuid();
 
-            Events.Add(sourceEvent);
+            var db = _mongoClient.GetDatabase(_config.Database);
+            var collection = db.GetCollection<Event>(_config.EventsCollection);
 
-            var db = _mongoClient.GetDatabase("event_database");
-            var collection = db.GetCollection<Event>("events");
             await collection.InsertOneAsync(sourceEvent);
 
             return sourceEvent;
@@ -52,8 +51,8 @@ namespace EventService.ObjectStorage
         /// <returns></returns>
         public async Task<Event> UpdateEventAsync(Guid eventId, Event sourceEvent)
         {
-            var db = _mongoClient.GetDatabase("event_database");
-            var collection = db.GetCollection<Event>("events");
+            var db = _mongoClient.GetDatabase(_config.Database);
+            var collection = db.GetCollection<Event>(_config.EventsCollection);
             var updateFilter = Builders<Event>.Filter.Eq("EventId", eventId);
 
             var result = await collection.ReplaceOneAsync(updateFilter, sourceEvent);
@@ -73,8 +72,8 @@ namespace EventService.ObjectStorage
         /// <returns></returns>
         public async Task<bool> DeleteEventAsync(Guid eventId)
         {
-            var db = _mongoClient.GetDatabase("event_database");
-            var collection = db.GetCollection<Event>("events");
+            var db = _mongoClient.GetDatabase(_config.Database);
+            var collection = db.GetCollection<Event>(_config.EventsCollection);
             var deleteFilter = Builders<Event>.Filter.Eq("EventId", eventId);
 
             var result = await collection.DeleteOneAsync(deleteFilter);
@@ -93,8 +92,8 @@ namespace EventService.ObjectStorage
         /// <returns></returns>
         public async Task<List<Event>> GetEventListAsync()
         {
-            var db = _mongoClient.GetDatabase("event_database");
-            var collection = db.GetCollection<Event>("events");
+            var db = _mongoClient.GetDatabase(_config.Database);
+            var collection = db.GetCollection<Event>(_config.EventsCollection);
             var events = await collection.Find(new BsonDocument()).ToListAsync();
 
             return events;
@@ -109,8 +108,8 @@ namespace EventService.ObjectStorage
         /// <exception cref="ScException"></exception>
         public async Task AddTicketsToAnEventAsync(Guid eventId, List<Ticket> tickets)
         {
-            var db = _mongoClient.GetDatabase("event_database");
-            var collection = db.GetCollection<Event>("events");
+            var db = _mongoClient.GetDatabase(_config.Database);
+            var collection = db.GetCollection<Event>(_config.EventsCollection);
             var eventFilter = Builders<Event>.Filter.Eq("EventId", eventId);
 
             var result = await collection.Find(eventFilter).Limit(1).SingleAsync();
@@ -127,7 +126,7 @@ namespace EventService.ObjectStorage
 
                 for (int i = 0; i < tickets.Count; i++)
                 {
-                    if (foundEvent.PlacesAvailable == true)
+                    if (foundEvent.PlacesAvailable)
                     {
                         tickets[i].Place = i + 1;
                     }
@@ -148,8 +147,8 @@ namespace EventService.ObjectStorage
         /// <returns></returns>
         public async Task<bool> CheckIfPlaceIsAvailable(int place, Guid eventId)
         {
-            var db = _mongoClient.GetDatabase("event_database");
-            var collection = db.GetCollection<Event>("events");
+            var db = _mongoClient.GetDatabase(_config.Database);
+            var collection = db.GetCollection<Event>(_config.EventsCollection);
             var events = await collection.Find(new BsonDocument()).ToListAsync();
 
             var foundEvent = events.Find(x => x.EventId == eventId);
@@ -176,7 +175,7 @@ namespace EventService.ObjectStorage
                 throw new ScException("Билета с таким местом не существует");
             }
 
-            if (foundTicket?.Owner != Guid.Empty)
+            if (foundTicket.Owner != Guid.Empty)
             {
                 return false;
             }

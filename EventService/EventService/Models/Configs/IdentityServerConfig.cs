@@ -39,10 +39,19 @@
         /// </summary>
         public string Audience { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string IntrospectionEndpoint { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string ClientId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string ClientSecret { get; set; }
     }
 }

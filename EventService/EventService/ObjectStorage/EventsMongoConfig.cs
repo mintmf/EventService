@@ -1,11 +1,23 @@
 ﻿namespace EventService.ObjectStorage
 {
+    /// <summary>
+    /// Конфиг для MongoDB
+    /// </summary>
     public class EventsMongoConfig
     {
-        public string Address { get; set; }
+        /// <summary>
+        /// Адрес
+        /// </summary>
+        public string? Address { get; set; }
 
-        public string Database { get; set; }
+        /// <summary>
+        /// Имя базы данных
+        /// </summary>
+        public string? Database { get; set; }
 
-        public string EventsCollection { get; set; }
+        /// <summary>
+        /// Имя коллекции
+        /// </summary>
+        public string? EventsCollection { get; set; }
     }
 }

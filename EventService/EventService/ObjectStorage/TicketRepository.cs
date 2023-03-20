@@ -1,8 +1,6 @@
-﻿using EventService.Features.EventFeature;
-using EventService.Features.TicketFeature;
+﻿using EventService.Features.TicketFeature;
 using EventService.Features.TicketFeature.AddFreeTickets;
 using EventService.Features.TicketFeature.GiveUserATicket;
-using Microsoft.Extensions.Logging;
 using SC.Internship.Common.Exceptions;
 
 namespace EventService.ObjectStorage

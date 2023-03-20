@@ -1,31 +1,28 @@
 ﻿using EventService.ObjectStorage;
-using FluentValidation;
+using JetBrains.Annotations;
 using MediatR;
 using SC.Internship.Common.ScResult;
 
 namespace EventService.Features.EventFeature.CheckIfPlaceIsAvailable
 {
     /// <summary>
-    /// 
+    /// Обработчик команды проверки места
     /// </summary>
+    [UsedImplicitly]
     public class CheckIfPlaceIsAvailableCommandHandler : IRequestHandler<CheckIfPlaceIsAvailableCommand, ScResult<bool>>
     {
-        IEventRepository _eventRepository;
-        private readonly IValidator<Event> _validator;
-
+        private readonly IEventRepository _eventRepository;
         /// <summary>
-        /// 
+        /// Конструктор
         /// </summary>
         /// <param name="eventRepository"></param>
-        /// <param name="validator"></param>
-        public CheckIfPlaceIsAvailableCommandHandler(IEventRepository eventRepository, IValidator<Event> validator)
+        public CheckIfPlaceIsAvailableCommandHandler(IEventRepository eventRepository)
         {
             _eventRepository = eventRepository;
-            _validator = validator; 
         }
 
         /// <summary>
-        /// 
+        /// Обработчик
         /// </summary>
         /// <param name="command"></param>
         /// <param name="cancellationToken"></param>

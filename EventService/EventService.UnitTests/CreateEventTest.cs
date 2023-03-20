@@ -5,14 +5,14 @@ using EventService.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
-using SC.Internship.Common.Exceptions;
+using SC.Internship.Common.ScResult;
 
 namespace EventService.UnitTests;
 
 public class CreateEventTest
 {
-    IEventRepository mockRepository;
-    CreateEventCommandHandler handler;
+    private readonly IEventRepository _mockRepository;
+    private readonly CreateEventCommandHandler _handler;
     public CreateEventTest()
     {
         var serviceCollection = new ServiceCollection();
@@ -23,8 +23,8 @@ public class CreateEventTest
         var serviceProvider = serviceCollection.BuildServiceProvider();
         var validator = serviceProvider.GetService<IValidator<Event>>() ?? throw new ArgumentNullException();
 
-        mockRepository = Substitute.For<IEventRepository>();
-        handler = new CreateEventCommandHandler(mockRepository, validator);
+        _mockRepository = Substitute.For<IEventRepository>();
+        _handler = new CreateEventCommandHandler(_mockRepository, validator);
     }
 
     [Fact]
@@ -41,10 +41,10 @@ public class CreateEventTest
         var command = new CreateEventCommand { Event = mockEvent };
 
         // Act
-        var action = async () => await handler.Handle(command, new CancellationToken());
+        async Task<ScResult<Event>> Action() => await _handler.Handle(command, new CancellationToken());
 
         // Assert
-        var ex = await Assert.ThrowsAsync<ValidationException>(action);
+        var ex = await Assert.ThrowsAsync<ValidationException>((Func<Task<ScResult<Event>>>)Action);
         Assert.Equal("¬рем€ начала меропри€ти€ должно быть раньше времени окончани€", ex.Errors.First().ErrorMessage);
     }
 
@@ -62,10 +62,10 @@ public class CreateEventTest
         var command = new CreateEventCommand { Event = mockEvent };
 
         // Act
-        var action = async () => await handler.Handle(command, new CancellationToken());
+        async Task<ScResult<Event>> Action() => await _handler.Handle(command, new CancellationToken());
 
         // Assert
-        var ex = await Assert.ThrowsAsync<ValidationException>(action);
+        var ex = await Assert.ThrowsAsync<ValidationException>((Func<Task<ScResult<Event>>>)Action);
         Assert.Equal("ѕространство не может быть null", ex.Errors.First().ErrorMessage);
     }
 
@@ -86,14 +86,14 @@ public class CreateEventTest
             Tickets = null
         };
 
-        mockRepository
+        _mockRepository
             .AddEventAsync(Arg.Any<Event>())
             .Returns(mockEvent);
 
         var command = new CreateEventCommand { Event = mockEvent };
 
         // Act
-        var result = await handler.Handle(command, new CancellationToken());
+        var result = await _handler.Handle(command, new CancellationToken());
 
         // Assert
         Assert.Equal(mockEvent.EndTime, result.Result?.EndTime);
