@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using SC.Internship.Common.ScResult;
 using EventService.Features.EventFeature.CheckIfPlaceIsAvailable;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EventService.Features.EventFeature
 {
@@ -16,6 +17,7 @@ namespace EventService.Features.EventFeature
     [ApiController]
     [Route("events")]
     [TypeFilter(typeof(CommonExceptionFilter))]
+    [Authorize]
     public class EventController : ControllerBase
     {
         private readonly IMediator _mediatr;

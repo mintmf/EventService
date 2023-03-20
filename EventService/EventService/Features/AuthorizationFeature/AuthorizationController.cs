@@ -11,6 +11,7 @@ namespace EventService.Features.AuthorizationFeature
     /// </summary>
     [ApiController]
     [Route("stub")]
+    [Authorize]
     public class AuthorizationController : ControllerBase
     {
         private readonly IMediator _mediatr;
@@ -34,7 +35,6 @@ namespace EventService.Features.AuthorizationFeature
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Authorize]
         public async Task<ScResult> Authorize()
         {
             return await _mediatr.Send(new AuthorizeCommand());
