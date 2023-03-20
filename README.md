@@ -7,3 +7,5 @@
 2) Выполнить команду 
 
 > cd EventService && docker build -t eventservice -f EventService/Dockerfile . && docker compose -f EventService/docker-compose.yaml up --detach && start http://localhost:5010
+
+*для загрузки страницы может потребоваться время
