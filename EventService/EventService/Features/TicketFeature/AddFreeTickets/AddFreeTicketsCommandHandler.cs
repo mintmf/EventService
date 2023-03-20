@@ -6,7 +6,7 @@ using SC.Internship.Common.ScResult;
 namespace EventService.Features.TicketFeature.AddFreeTickets
 {
     /// <summary>
-    /// 
+    /// Обработчик команды добавления бесплатных билетов
     /// </summary>
     [UsedImplicitly]
     public class AddFreeTicketsCommandHandler : IRequestHandler<AddFreeTicketsCommand, ScResult<List<Ticket>>>

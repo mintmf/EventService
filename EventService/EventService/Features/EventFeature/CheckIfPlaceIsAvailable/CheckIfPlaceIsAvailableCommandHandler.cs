@@ -1,4 +1,5 @@
 ﻿using EventService.ObjectStorage;
+using FluentValidation;
 using MediatR;
 using SC.Internship.Common.ScResult;
 
@@ -10,14 +11,17 @@ namespace EventService.Features.EventFeature.CheckIfPlaceIsAvailable
     public class CheckIfPlaceIsAvailableCommandHandler : IRequestHandler<CheckIfPlaceIsAvailableCommand, ScResult<bool>>
     {
         IEventRepository _eventRepository;
+        private readonly IValidator<Event> _validator;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="eventRepository"></param>
-        public CheckIfPlaceIsAvailableCommandHandler(IEventRepository eventRepository)
+        /// <param name="validator"></param>
+        public CheckIfPlaceIsAvailableCommandHandler(IEventRepository eventRepository, IValidator<Event> validator)
         {
             _eventRepository = eventRepository;
+            _validator = validator; 
         }
 
         /// <summary>

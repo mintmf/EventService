@@ -1,19 +1,19 @@
 ﻿using EventService.Services;
 using FluentValidation;
 
-namespace EventService.Features.EventFeature.CreateEvent
+namespace EventService.Features.EventFeature
 {
     /// <summary>
     /// Класс для валидации создания мероприятия
     /// </summary>
-    public class CreateEventValidator : AbstractValidator<Event>
+    public class EventValidator : AbstractValidator<Event>
     {
         /// <summary>
         /// Валидация
         /// </summary>
         /// <param name="imageService"></param>
         /// <param name="spaceService"></param>
-        public CreateEventValidator(IImageService imageService, ISpaceService spaceService)
+        public EventValidator(IImageService imageService, ISpaceService spaceService)
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
 
@@ -33,7 +33,7 @@ namespace EventService.Features.EventFeature.CreateEvent
                 .WithMessage("Пространство не может быть null")
                 .Must(spaceService.IsSpaceExists)
                 .WithMessage("Время начала мероприятия должно быть раньше времени окончания");
-            
+
             RuleFor(x => x.PreviewImageId)
                 .Must(imageService.IsImageExists)
                 .WithMessage("Отсутствует изображение мероприятия");

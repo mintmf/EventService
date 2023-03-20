@@ -102,13 +102,18 @@ namespace EventService.Features.EventFeature
         }
 
         /// <summary>
-        /// 
+        /// Проверить место
         /// </summary>
         /// <param name="place"></param>
         /// <param name="eventId"></param>
+        /// <response code="200">true или false</response>
+        /// <response code="400">Сообщение об ошибке</response>
         /// <returns></returns>
         [HttpGet]
         [Route("{place}&{eventId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ScResult<bool>> CheckPlace([FromRoute] int place, [FromRoute] Guid eventId)
         {
             var result = await _mediatr.Send(new CheckIfPlaceIsAvailableCommand { Place = place, EventId = eventId });
