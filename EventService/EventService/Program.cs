@@ -4,10 +4,11 @@ using EventService.Services;
 using Microsoft.OpenApi.Models;
 using EventRepository = EventService.ObjectStorage.EventRepository;
 using IEventRepository = EventService.ObjectStorage.IEventRepository;
-using EventService.Models.Configs;
 using EventService.ObjectStorage;
 using IdentityModel.AspNetCore.OAuth2Introspection;
 using MongoDB.Driver;
+using EventService.Infrastracture;
+using Microsoft.AspNetCore.HttpLogging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,6 +71,15 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+builder.Services.AddHttpLogging(logging =>
+{
+    logging.LoggingFields = HttpLoggingFields.All;
+    logging.MediaTypeOptions.AddText("application/javascript");
+    logging.RequestBodyLogLimit = 4096;
+    logging.ResponseBodyLogLimit = 4096;
+});
+
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<ISpaceService, SpaceService>();
@@ -77,12 +87,15 @@ builder.Services.AddScoped<IValidator<Event>, EventValidator>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<IMongoClient, EventsMongoClient>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.Configure<IdentityServerConfig>(builder.Configuration.GetSection("IdentityServerConfig"));
 builder.Services.Configure<EventsMongoConfig>(builder.Configuration.GetSection("MongoParameters"));
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 var app = builder.Build();
+
+app.UseHttpLogging();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

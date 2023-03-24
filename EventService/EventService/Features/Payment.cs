@@ -11,11 +11,9 @@
         public Guid PaymentId { get; set; }
 
         /// <summary>
-        /// Состояние платеда
+        /// Состояние платежа
         /// </summary>
-        public enum State
-        {
-        }
+        public PaymentState PaymentState { get; set; }
 
         /// <summary>
         /// Дата создания платежа

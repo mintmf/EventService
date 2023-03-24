@@ -17,7 +17,7 @@ namespace EventService.Features.EventFeature
     [ApiController]
     [Route("events")]
     [TypeFilter(typeof(CommonExceptionFilter))]
-    [Authorize]
+    //[Authorize]
     public class EventController : ControllerBase
     {
         private readonly IMediator _mediatr;

@@ -46,7 +46,7 @@ namespace EventService.ObjectStorage
         }
 
         /// <summary>
-        /// Дать пользователю билет
+        /// Выдать пользователю билет
         /// </summary>
         /// <returns></returns>
         public async Task<Ticket> GiveUserAticketAsync(Guid ticketId, GiveUserATicketParameters parameters)

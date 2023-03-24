@@ -1,6 +1,7 @@
 ﻿using EventService.Features.TicketFeature.AddFreeTickets;
 using EventService.Features.TicketFeature.CheckIfUserHasATicket;
 using EventService.Features.TicketFeature.GiveUserATicket;
+using EventService.Features.TicketFeature.SellTicket;
 using EventService.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -15,18 +16,21 @@ namespace EventService.Features.TicketFeature
     [ApiController]
     [Route("tickets")]
     [TypeFilter(typeof(CommonExceptionFilter))]
-    [Authorize]
+    //[Authorize]
     public class TicketController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ILogger<TicketController> _logger;
 
         /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="mediator"></param>
-        public TicketController(IMediator mediator)
+        /// <param name="logger"></param>
+        public TicketController(IMediator mediator, ILogger<TicketController> logger)
         {
             _mediator = mediator;
+            _logger = logger;
         }
 
         /// <summary>
@@ -41,6 +45,10 @@ namespace EventService.Features.TicketFeature
         public async Task<ScResult<List<Ticket>>> AddFreeTickets([FromBody] AddFreeTicketsParameters parameters)
         {
             var result = await _mediator.Send(new AddFreeTicketsCommand { Parameters = parameters });
+
+            _logger.LogInformation($"\nВремя: {DateTime.Now}\n" +
+                $"Имя метода: POST AddFreeTickets\n" +
+                $"Параметры: {parameters.NumberOfTickets}, {parameters.EventId}\n");
 
             return result;
         }
@@ -67,25 +75,43 @@ namespace EventService.Features.TicketFeature
         /// <summary>
         /// Проверить, есть ли у пользователя билет на данное мероприятие
         /// </summary>
-        /// <param name="userId">ID пользователя</param>
-        /// <param name="eventId">ID мероприятия</param>
+        /// <param name="parameters">ID пользователя</param>
         /// <returns>true или false</returns>
         /// <response code="200">Успех</response>
         /// <response code="400">Неверные входные данные</response>
-        [HttpGet]
+        [HttpPost]
         [Route("check")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ScResult<bool>> CheckIfUserHasATicket([FromRoute] Guid userId, [FromRoute] Guid eventId)
+        public async Task<ScResult<bool>> CheckIfUserHasATicket([FromBody] CheckIfUserHasATicketParameters parameters)
         {
-            var result = await _mediator.Send(new CheckIfUserHasATicketCommand { UserId = userId, EventId = eventId });
+            var result = await _mediator.Send(
+                new CheckIfUserHasATicketCommand 
+                { 
+                    UserId = parameters.UserId, 
+                    EventId = parameters.EventId 
+                });
 
             return result;
         }
 
-        public async Task<ScResult> SellTicket(Guid userId, Guid eventId)
+        /// <summary>
+        /// Продать билет
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="ticketId"></param>
+        /// <response code="200">Успех</response>
+        /// <response code="400">Неверные входные данные</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{ticketId}/sell/{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ScResult> SellTicket([FromRoute] Guid ticketId, [FromRoute] Guid userId)
         {
+            var result = await _mediator.Send(new SellTicketCommand { TicketId = ticketId, UserId =  userId });
 
+            return result;
         }
     }
 }

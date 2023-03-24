@@ -1,4 +1,4 @@
-﻿namespace EventService.Models.Configs
+﻿namespace EventService.Infrastracture
 {
     /// <summary>
     /// Настройки сервера
