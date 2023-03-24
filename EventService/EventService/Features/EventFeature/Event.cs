@@ -56,5 +56,10 @@ namespace EventService.Features.EventFeature
         /// Есть ли места
         /// </summary>
         public bool PlacesAvailable { get; set; }
+
+        /// <summary>
+        /// Цена билета
+        /// </summary>
+        public decimal TicketPrice { get; set; }
     }
 }

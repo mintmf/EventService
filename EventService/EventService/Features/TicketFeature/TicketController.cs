@@ -82,5 +82,10 @@ namespace EventService.Features.TicketFeature
 
             return result;
         }
+
+        public async Task<ScResult> SellTicket(Guid userId, Guid eventId)
+        {
+
+        }
     }
 }
