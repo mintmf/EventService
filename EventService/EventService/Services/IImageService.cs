@@ -10,6 +10,6 @@
         /// </summary>
         /// <param name="imageId"></param>
         /// <returns></returns>
-        bool IsImageExists(Guid? imageId);
+        Task<bool> IsImageExists(Guid? imageId);
     }
 }

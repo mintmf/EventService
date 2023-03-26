@@ -31,11 +31,17 @@ namespace EventService.Features.EventFeature
                 .NotNull()
                 .WithErrorCode("400")
                 .WithMessage("Пространство не может быть null")
-                .Must(spaceService.IsSpaceExists)
-                .WithMessage("Время начала мероприятия должно быть раньше времени окончания");
+                .MustAsync(async (id, cancellation) =>
+                {
+                    return await spaceService.IsSpaceExists(id);
+                })
+                .WithMessage("Такого пространства не существует");
 
             RuleFor(x => x.PreviewImageId)
-                .Must(imageService.IsImageExists)
+                .MustAsync(async (id, cancellation) =>
+                {
+                    return await imageService.IsImageExists(id);
+                })
                 .WithMessage("Отсутствует изображение мероприятия");
         }
     }

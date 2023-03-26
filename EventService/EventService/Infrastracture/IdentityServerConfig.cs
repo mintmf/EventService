@@ -6,25 +6,6 @@
     public class IdentityServerConfig
     {
         /// <summary>
-        /// Конструктор
-        /// </summary>
-        /// <param name="issuer"></param>
-        /// <param name="authority"></param>
-        /// <param name="audience"></param>
-        /// <param name="introspectionEndpoint"></param>
-        /// <param name="clientId"></param>
-        /// <param name="clientSecret"></param>
-        public IdentityServerConfig(string issuer, string authority, string audience, string introspectionEndpoint, string clientId, string clientSecret)
-        {
-            Issuer = issuer;
-            Authority = authority;
-            Audience = audience;
-            IntrospectionEndpoint = introspectionEndpoint;
-            ClientId = clientId;
-            ClientSecret = clientSecret;
-        }
-
-        /// <summary>
         /// Адрес
         /// </summary>
         public string Issuer { get; set; }

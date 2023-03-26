@@ -9,6 +9,7 @@ using IdentityModel.AspNetCore.OAuth2Introspection;
 using MongoDB.Driver;
 using EventService.Infrastracture;
 using Microsoft.AspNetCore.HttpLogging;
+using Polly;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,6 +81,9 @@ builder.Services.AddHttpLogging(logging =>
     logging.ResponseBodyLogLimit = 4096;
 });
 
+builder.Services.AddHttpClient<IPaymentClient, PaymentClient>()
+    .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2)));
+
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<ISpaceService, SpaceService>();
@@ -88,8 +92,13 @@ builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<IMongoClient, EventsMongoClient>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
-builder.Services.Configure<IdentityServerConfig>(builder.Configuration.GetSection("IdentityServerConfig"));
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+
+builder.Services.Configure<IdentityServerConfig>(builder.Configuration.GetSection("IdentityServer"));
 builder.Services.Configure<EventsMongoConfig>(builder.Configuration.GetSection("MongoParameters"));
+builder.Services.Configure<ImageServiceConfig>(builder.Configuration.GetSection("ImageService"));
+builder.Services.Configure<SpaceServiceConfig>(builder.Configuration.GetSection("SpaceService"));
+builder.Services.Configure<PaymentServiceConfig>(builder.Configuration.GetSection("PaymentService"));
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 

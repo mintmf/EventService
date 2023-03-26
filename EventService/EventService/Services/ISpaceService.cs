@@ -10,6 +10,6 @@
         /// </summary>
         /// <param name="spaceId"></param>
         /// <returns></returns>
-        public bool IsSpaceExists(Guid? spaceId);
+        public Task<bool> IsSpaceExists(Guid? spaceId);
     }
 }

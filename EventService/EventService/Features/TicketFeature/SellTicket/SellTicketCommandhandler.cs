@@ -1,8 +1,13 @@
 ﻿using EventService.Features.TicketFeature.GiveUserATicket;
+using EventService.Infrastracture;
 using EventService.ObjectStorage;
 using MediatR;
+using Microsoft.Extensions.Options;
+using MongoDB.Bson.IO;
 using SC.Internship.Common.Exceptions;
 using SC.Internship.Common.ScResult;
+using Newtonsoft.Json;
+using EventService.Services;
 
 namespace EventService.Features.TicketFeature.SellTicket
 {
@@ -13,16 +18,24 @@ namespace EventService.Features.TicketFeature.SellTicket
     {
         private IPaymentRepository _paymentRepository;
         private ITicketRepository _ticketRepository;
-        private IMediator _mediator;
+        private HttpClient client = new ();
+        private PaymentServiceConfig _config;
+        private IPaymentService _paymentService;
 
         /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="payment"></param>
-        public SellTicketCommandHandler(IPaymentRepository payment, IMediator mediator)
+        /// <param name="options"></param>
+        /// <param name="ticketRepository"></param>
+        /// <param name="paymentService"></param>
+        public SellTicketCommandHandler(IPaymentRepository payment, 
+            IOptions<PaymentServiceConfig> options, ITicketRepository ticketRepository, IPaymentService paymentService)
         {
             _paymentRepository = payment;
-            _mediator = mediator;
+            _config = options.Value;
+            _ticketRepository = ticketRepository;
+            _paymentService = paymentService;
         }
 
         /// <summary>
@@ -33,8 +46,12 @@ namespace EventService.Features.TicketFeature.SellTicket
         /// <returns></returns>
         public async Task<ScResult> Handle(SellTicketCommand command, CancellationToken cancellationToken)
         {
-            var payment = _paymentRepository.CreatePayment();
-            payment.PaymentState = PaymentState.Hold;
+            var payment = await _paymentService.CreatePaymentAsync();
+
+            if (payment == null)
+            {
+                throw new ScException("Не удалось создать платеж");
+            }
 
             try
             {
@@ -43,12 +60,14 @@ namespace EventService.Features.TicketFeature.SellTicket
             }
             catch (Exception ex)
             {
-                payment.PaymentState = PaymentState.Canceled;
+                //payment.PaymentState = PaymentState.Canceled;
+                await _paymentService.CancelPaymentAsync(payment.PaymentId);
 
                 throw new ScException(ex, "Ошибка при попытке передачи пользователю билета");
             }
 
-            payment.PaymentState = PaymentState.Confirmed;
+            //payment.PaymentState = PaymentState.Confirmed;
+            var res = await _paymentService.ConfirmPaymentAsync(payment.PaymentId);
 
             return new ScResult();
         }
