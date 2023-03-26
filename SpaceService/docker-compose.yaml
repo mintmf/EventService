@@ -12,3 +12,8 @@ services:
     ports:
     - 44346:80        
     restart: always    
+  paymentservice:
+    image: paymentservice
+    ports:
+    - 44328:80
+    restart: always

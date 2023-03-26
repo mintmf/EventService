@@ -11,7 +11,7 @@ namespace EventService.Services
     /// </summary>
     public class SpaceService : ISpaceService
     {
-        static readonly HttpClient client = new();
+        private readonly HttpClient _client;
         private readonly SpaceServiceConfig _config;
         private readonly ILogger<SpaceService> _logger;
 
@@ -20,10 +20,14 @@ namespace EventService.Services
         /// </summary>
         /// <param name="config"></param>
         /// <param name="logger"></param>
-        public SpaceService(IOptions<SpaceServiceConfig> config, ILogger<SpaceService> logger)
+        /// <param name="client"></param>
+        public SpaceService(IOptions<SpaceServiceConfig> config,
+            ILogger<SpaceService> logger,
+            HttpClient client)
         {
             _config = config.Value;
             _logger = logger;
+            _client = client;
         }
 
         /// <summary>
@@ -37,7 +41,7 @@ namespace EventService.Services
                 + _config.IsSpaceExistsEndpoint.Replace("{spaceId}", spaceId.ToString());
 
             _logger.LogInformation($"GET {requestUri} Parameters: {spaceId}");
-            var response = await client.GetAsync(requestUri);
+            var response = await _client.GetAsync(requestUri);
 
             var body = await response.Content.ReadAsStringAsync();
             _logger.LogInformation($"Status: {response.StatusCode} Response: {body}");

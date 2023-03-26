@@ -81,7 +81,11 @@ builder.Services.AddHttpLogging(logging =>
     logging.ResponseBodyLogLimit = 4096;
 });
 
-builder.Services.AddHttpClient<IPaymentClient, PaymentClient>()
+builder.Services.AddHttpClient<IPaymentService, PaymentService>()
+    .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2)));
+builder.Services.AddHttpClient<IImageService, ImageService>()
+    .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2)));
+builder.Services.AddHttpClient<ISpaceService, SpaceService>()
     .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2)));
 
 builder.Services.AddScoped<IEventRepository, EventRepository>();

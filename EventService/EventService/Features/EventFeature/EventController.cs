@@ -16,6 +16,7 @@ namespace EventService.Features.EventFeature
     /// </summary>
     [ApiController]
     [Route("events")]
+    [Authorize]
     [TypeFilter(typeof(CommonExceptionFilter))]
     //[Authorize]
     public class EventController : ControllerBase

@@ -11,7 +11,7 @@ namespace EventService.Services
     /// </summary>
     public class ImageService : IImageService
     {
-        static readonly HttpClient client = new();
+        private readonly HttpClient _client;
         private readonly ImageServiceConfig _config;
         private readonly ILogger<ImageService> _logger;
 
@@ -20,10 +20,14 @@ namespace EventService.Services
         /// </summary>
         /// <param name="config"></param>
         /// <param name="logger"></param>
-        public ImageService(IOptions<ImageServiceConfig> config, ILogger<ImageService> logger)
+        /// <param name="client"></param>
+        public ImageService(IOptions<ImageServiceConfig> config, 
+            ILogger<ImageService> logger,
+            HttpClient client)
         {
             _config = config.Value;
             _logger = logger;
+            _client = client;
         }
 
         /// <summary>
@@ -37,7 +41,7 @@ namespace EventService.Services
                 + _config.IsImageExistsEndpoint.Replace("{imageId}", imageId.ToString());
 
             _logger.LogInformation($"GET {requestUri} Parameters: {imageId}");
-            var response = await client.GetAsync(requestUri);
+            var response = await _client.GetAsync(requestUri);
 
             var body = await response.Content.ReadAsStringAsync();
             _logger.LogInformation($"Status: {response.StatusCode} Response: {body}");

@@ -15,8 +15,8 @@ namespace EventService.Features.TicketFeature
     /// </summary>
     [ApiController]
     [Route("tickets")]
+    [Authorize]
     [TypeFilter(typeof(CommonExceptionFilter))]
-    //[Authorize]
     public class TicketController : ControllerBase
     {
         private readonly IMediator _mediator;

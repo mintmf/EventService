@@ -9,27 +9,25 @@ namespace EventService.Services
     /// </summary>
     public class PaymentService : IPaymentService
     {
-        private HttpClient client = new();
+        private HttpClient _client;
 
         private PaymentServiceConfig _config;
 
         private ILogger<PaymentService> _logger;
-
-        private IPaymentClient _paymentClient;
 
         /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="config"></param>
         /// <param name="logger"></param>
-        /// <param name="paymentClient"></param>
+        /// <param name="client"></param>
         public PaymentService(IOptions<PaymentServiceConfig> config,
             ILogger<PaymentService> logger,
-            IPaymentClient paymentClient)
+            HttpClient client)
         {
             _config = config.Value;
             _logger = logger;
-            _paymentClient = paymentClient;
+            _client = client;
         }
 
         /// <summary>
@@ -38,19 +36,17 @@ namespace EventService.Services
         /// <returns></returns>
         public async Task<Payment> CreatePaymentAsync()
         {
-            //var requestUri = _config.Address + _config.CreatePayment;
+            var requestUri = _config.Address + _config.CreatePayment;
 
-            //_logger.LogInformation($"POST {requestUri} Parameters: NULL");
-            //var response = await client.PostAsync(requestUri, null);
-            var response = await _paymentClient.PostAsync();
-            /*
+            _logger.LogInformation($"POST {requestUri} Parameters: NULL");
+            var response = await _client.PostAsync(requestUri, null);
+
             var body = await response.Content.ReadAsStringAsync();
             _logger.LogInformation($"Status: {response.StatusCode} Response: {body}");
 
             var payment = Newtonsoft.Json.JsonConvert.DeserializeObject<Payment>(body);
-            return payment;*/
 
-            return response;
+            return payment;
         }
 
         /// <summary>
@@ -63,7 +59,7 @@ namespace EventService.Services
             var requestUri = _config.Address + _config.CreatePayment;
 
             _logger.LogInformation($"POST {requestUri} Parameters: {paymentId}");
-            var response = await client.PutAsync(requestUri + paymentId.ToString(), null);
+            var response = await _client.PutAsync(requestUri + paymentId.ToString(), null);
 
             var body = await response.Content.ReadAsStringAsync();
             _logger.LogInformation($"Status: {response.StatusCode} Response: {body}");
@@ -82,7 +78,7 @@ namespace EventService.Services
             var requestUri = _config.Address + _config.CreatePayment;
 
             _logger.LogInformation($"POST {requestUri} Parameters: {paymentId}");
-            var response = await client.PutAsync(requestUri + paymentId.ToString(), null);
+            var response = await _client.PutAsync(requestUri + paymentId.ToString(), null);
 
             var body = await response.Content.ReadAsStringAsync();
             _logger.LogInformation($"Status: {response.StatusCode} Response: {body}");

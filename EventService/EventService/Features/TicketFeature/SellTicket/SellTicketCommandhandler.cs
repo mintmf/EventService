@@ -16,24 +16,16 @@ namespace EventService.Features.TicketFeature.SellTicket
     /// </summary>
     public class SellTicketCommandHandler : IRequestHandler<SellTicketCommand, ScResult>
     {
-        private IPaymentRepository _paymentRepository;
         private ITicketRepository _ticketRepository;
-        private HttpClient client = new ();
-        private PaymentServiceConfig _config;
         private IPaymentService _paymentService;
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="payment"></param>
-        /// <param name="options"></param>
         /// <param name="ticketRepository"></param>
         /// <param name="paymentService"></param>
-        public SellTicketCommandHandler(IPaymentRepository payment, 
-            IOptions<PaymentServiceConfig> options, ITicketRepository ticketRepository, IPaymentService paymentService)
+        public SellTicketCommandHandler(ITicketRepository ticketRepository, IPaymentService paymentService)
         {
-            _paymentRepository = payment;
-            _config = options.Value;
             _ticketRepository = ticketRepository;
             _paymentService = paymentService;
         }
@@ -60,13 +52,11 @@ namespace EventService.Features.TicketFeature.SellTicket
             }
             catch (Exception ex)
             {
-                //payment.PaymentState = PaymentState.Canceled;
                 await _paymentService.CancelPaymentAsync(payment.PaymentId);
 
                 throw new ScException(ex, "Ошибка при попытке передачи пользователю билета");
             }
 
-            //payment.PaymentState = PaymentState.Confirmed;
             var res = await _paymentService.ConfirmPaymentAsync(payment.PaymentId);
 
             return new ScResult();
