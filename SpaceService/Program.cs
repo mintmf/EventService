@@ -1,21 +1,31 @@
-//using SC.Internship.Common.ScResult;
-
+using IdentityModel.AspNetCore.OAuth2Introspection;
 using SpaceService;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var identityServerConfig = builder.Configuration.GetSection("IdentityServer").Get<IdentityServerConfig>();
+
+builder.Services.AddAuthentication(OAuth2IntrospectionDefaults.AuthenticationScheme)
+    .AddOAuth2Introspection(options =>
+    {
+        options.Authority = identityServerConfig?.Authority;
+        options.ClientId = identityServerConfig?.ClientId;
+        options.ClientSecret = identityServerConfig?.ClientSecret;
+        options.IntrospectionEndpoint = identityServerConfig?.IntrospectionEndpoint;
+    });
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
-//app.MapGet("/", () => "Hello World!");
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapGet("/", () => "This is a GET");
-//app.MapGet("/users/{userId}/books/{bookId}", (int userId, int bookId) => $"The user id is {userId} and book id is {bookId}");
 app.MapGet("/spaces/{spaceId}",
     () =>
     {
-        var result = new ScResult<bool> (true);
-        //var result = true;
-
-        return result;
+        return new ScResult<bool>(true);
     }
-);  
+).RequireAuthorization();
 
 app.Run();

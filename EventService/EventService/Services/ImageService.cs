@@ -1,8 +1,10 @@
 ﻿using EventService.Features;
 using EventService.Infrastracture;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using SC.Internship.Common.ScResult;
+using System.Net.Http.Headers;
 
 namespace EventService.Services
 {
@@ -12,8 +14,12 @@ namespace EventService.Services
     public class ImageService : IImageService
     {
         private readonly HttpClient _client;
+
         private readonly ImageServiceConfig _config;
+
         private readonly ILogger<ImageService> _logger;
+
+        private readonly IHttpContextAccessor _contextAccessor;
 
         /// <summary>
         /// Конструктор
@@ -21,13 +27,16 @@ namespace EventService.Services
         /// <param name="config"></param>
         /// <param name="logger"></param>
         /// <param name="client"></param>
+        /// <param name="contextAccessor"></param>
         public ImageService(IOptions<ImageServiceConfig> config, 
             ILogger<ImageService> logger,
-            HttpClient client)
+            HttpClient client,
+            IHttpContextAccessor contextAccessor)
         {
             _config = config.Value;
             _logger = logger;
             _client = client;
+            _contextAccessor = contextAccessor;
         }
 
         /// <summary>
@@ -41,6 +50,16 @@ namespace EventService.Services
                 + _config.IsImageExistsEndpoint.Replace("{imageId}", imageId.ToString());
 
             _logger.LogInformation($"GET {requestUri} Parameters: {imageId}");
+
+            var token = _contextAccessor?.HttpContext?.Request.Headers[HeaderNames.Authorization].FirstOrDefault();
+
+            if (AuthenticationHeaderValue.TryParse(token, out var headerValue) &&
+                headerValue.Scheme == "Bearer")
+            {
+                _client.DefaultRequestHeaders.Authorization =
+                        new AuthenticationHeaderValue("Bearer", headerValue.Parameter);
+            }
+
             var response = await _client.GetAsync(requestUri);
 
             var body = await response.Content.ReadAsStringAsync();

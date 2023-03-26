@@ -4,14 +4,82 @@ services:
     image: eventservice
     environment:
     - "MongoParameters__Address=mongodb://mongodb:27017"
+    - "SpaceService__Address=http://spaceservice:80"
+    - "ImageService__Address=http://imageservice:80"
+    - "PaymentService__Address=http://paymentservice:80"
+    - "IdentityServer__IntrospectionEndpoint=http://identity:80/connect/introspect"
     container_name: eventservice
     depends_on:        
-    - mongodb        
+    - mongodb    
+    - spaceservice
+    - imageservice
+    - paymentservice
+    - identity    
     ports:
     - 5010:80        
     restart: always    
+  spaceservice:       
+    image: spaceservice
+    environment:
+    - "IdentityServer__IntrospectionEndpoint=http://identity:80/connect/introspect"
+    container_name: spaceservice
+    depends_on:
+    - identity
+    ports:
+    - 5011:80        
+    restart: always    
+  imageservice:       
+    image: imageservice
+    environment:
+    - "IdentityServer__IntrospectionEndpoint=http://identity:80/connect/introspect"
+    container_name: imageservice
+    depends_on:
+    - identity
+    ports:
+    - 5012:80        
+    restart: always    
+  paymentservice:
+    image: paymentservice
+    environment:
+    - "IdentityServer__IntrospectionEndpoint=http://identity:80/connect/introspect"
+    depends_on:
+    - identity
+    ports:
+    - 5013:80
+    restart: always
   mongodb:
     image: mongo:latest
     ports:
-    - 27018:27017              
+    - 27019:27017         
+    restart: always
+  identity:       
+    image: bizzpo/identityserver4
+    environment:
+    - Environment=Development
+    - "Identity__Mongo__ConnectionString=mongodb://root:foobar@identitymongodb:27017/?readPreference=primaryPreferred&appname=identityserver"
+    - Identity__Mongo__Database=Identity
+    - Identity__Redis__ConnectionString=identityredis
+    - Identity__Redis__Db=-1
+    - Identity__Redis__Prefix=identity
+    container_name: identity
+    depends_on:            
+    - identityredis            
+    - identitymongodb        
+    ports:
+    - 5000:80        
+    restart: always    
+  identityredis:        
+    image: bitnami/redis
+    ports:
+    - 6379:6379
+    environment:            
+    - ALLOW_EMPTY_PASSWORD=yes             
+    restart: always    
+  identitymongodb:
+    image: mongo:4.2.8
+    environment:            
+    - MONGO_INITDB_ROOT_USERNAME=root            
+    - MONGO_INITDB_ROOT_PASSWORD=foobar        
+    ports:
+    - 27017:27017              
     restart: always

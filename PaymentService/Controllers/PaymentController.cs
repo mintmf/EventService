@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PaymentService.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/payments")]
     public class PaymentController : ControllerBase
     {
@@ -14,18 +16,18 @@ namespace PaymentService.Controllers
             return result;
         }
 
-        [HttpPut]
-        [Route("confirm/{paymentId}")]
-        public Payment ConfirmPayment(Guid paymentId)
+        [HttpPost]
+        [Route("{paymentId}/confirm")]
+        public Payment ConfirmPayment([FromRoute] Guid paymentId)
         {
             var result = new PaymentRepository().ConfirmPayment(paymentId);
 
             return result;
         }
 
-        [HttpPut]
-        [Route("cancel/{paymentId}")]
-        public Payment CancelPayment(Guid paymentId)
+        [HttpPost]
+        [Route("{paymentId}/cancel")]
+        public Payment CancelPayment([FromRoute] Guid paymentId)
         {
             var result = new PaymentRepository().CancelPayment(paymentId);
 

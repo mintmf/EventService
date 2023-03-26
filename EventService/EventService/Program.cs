@@ -40,7 +40,7 @@ builder.Services.AddAuthentication(OAuth2IntrospectionDefaults.AuthenticationSch
         options.ClientSecret = identityServerConfig?.ClientSecret;
         options.IntrospectionEndpoint = identityServerConfig?.IntrospectionEndpoint;
     });
-
+builder.Services.AddAuthorization();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -105,6 +105,8 @@ builder.Services.Configure<SpaceServiceConfig>(builder.Configuration.GetSection(
 builder.Services.Configure<PaymentServiceConfig>(builder.Configuration.GetSection("PaymentService"));
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

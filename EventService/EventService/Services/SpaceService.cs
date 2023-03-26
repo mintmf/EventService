@@ -1,7 +1,9 @@
 ﻿using EventService.Infrastracture;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using SC.Internship.Common.ScResult;
+using System.Net.Http.Headers;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace EventService.Services
@@ -12,8 +14,12 @@ namespace EventService.Services
     public class SpaceService : ISpaceService
     {
         private readonly HttpClient _client;
+
         private readonly SpaceServiceConfig _config;
+
         private readonly ILogger<SpaceService> _logger;
+
+        private readonly IHttpContextAccessor _contextAccessor;
 
         /// <summary>
         /// Конструткор
@@ -21,13 +27,16 @@ namespace EventService.Services
         /// <param name="config"></param>
         /// <param name="logger"></param>
         /// <param name="client"></param>
+        /// <param name="contextAccessor"></param>
         public SpaceService(IOptions<SpaceServiceConfig> config,
             ILogger<SpaceService> logger,
-            HttpClient client)
+            HttpClient client,
+            IHttpContextAccessor contextAccessor)
         {
             _config = config.Value;
             _logger = logger;
             _client = client;
+            _contextAccessor = contextAccessor;
         }
 
         /// <summary>
@@ -41,6 +50,16 @@ namespace EventService.Services
                 + _config.IsSpaceExistsEndpoint.Replace("{spaceId}", spaceId.ToString());
 
             _logger.LogInformation($"GET {requestUri} Parameters: {spaceId}");
+
+            var token = _contextAccessor?.HttpContext?.Request.Headers[HeaderNames.Authorization].FirstOrDefault();
+
+            if (AuthenticationHeaderValue.TryParse(token, out var headerValue) &&
+                headerValue.Scheme == "Bearer")
+            {
+                _client.DefaultRequestHeaders.Authorization =
+                        new AuthenticationHeaderValue("Bearer", headerValue.Parameter);
+            }
+
             var response = await _client.GetAsync(requestUri);
 
             var body = await response.Content.ReadAsStringAsync();

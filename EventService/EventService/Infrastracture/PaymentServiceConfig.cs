@@ -4,6 +4,10 @@
     {
         public string Address { get; set; }
 
-        public string CreatePayment { get; set; }
+        public string CreatePaymentEndpoint { get; set; }
+
+        public string ConfirmPaymentEndpoint { get; set; }
+
+        public string CancelPaymentEndpoint { get; set; }
     }
 }
