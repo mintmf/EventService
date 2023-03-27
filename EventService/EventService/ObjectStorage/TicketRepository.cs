@@ -46,21 +46,20 @@ namespace EventService.ObjectStorage
         }
 
         /// <summary>
-        /// Дать пользователю билет
+        /// Выдать пользователю билет
         /// </summary>
         /// <returns></returns>
         public async Task<Ticket> GiveUserAticketAsync(Guid ticketId, GiveUserATicketParameters parameters)
         {
             var ticket = Tickets.Find(t => t.Id == ticketId);
 
-            if (ticket == null)
+            if (ticket != null)
             {
-                throw new ScException("Такого билета не существует");
+                ticket.Owner = parameters.UserId;
+
+                return await Task.FromResult(ticket);
             }
-
-            ticket.Owner = parameters.UserId;
-
-            return await Task.FromResult(ticket);
+            throw new ScException("Такого билета не существует");
         }
 
         /// <summary>
@@ -73,14 +72,13 @@ namespace EventService.ObjectStorage
 
             var foundEvent = events.Find(e => e.EventId == eventId);
 
-            if (foundEvent == null)
+            if (foundEvent != null)
             {
-                throw new ScException("Такого мероприятия не существует");
+                var ticketOwner = foundEvent.Tickets?.Find(t => t.Owner == userId);
+
+                return ticketOwner != null;
             }
-
-            var ticketOwner = foundEvent.Tickets?.Find(t => t.Owner == userId);
-
-            return ticketOwner != null;
+            throw new ScException("Такого мероприятия не существует");
         }
 
     }

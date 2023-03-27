@@ -1,0 +1,19 @@
+version: '1.0'
+services:
+  spaceservice:       
+    image: spaceservice
+    container_name: spaceservice
+    ports:
+    - 8080:80        
+    restart: always    
+  imageservice:       
+    image: imageservice
+    container_name: imageservice
+    ports:
+    - 44346:80        
+    restart: always    
+  paymentservice:
+    image: paymentservice
+    ports:
+    - 44328:80
+    restart: always

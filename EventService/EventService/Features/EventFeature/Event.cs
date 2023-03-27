@@ -56,5 +56,11 @@ namespace EventService.Features.EventFeature
         /// Есть ли места
         /// </summary>
         public bool PlacesAvailable { get; set; }
+
+        /// <summary>
+        /// Цена билета
+        /// </summary>
+        // ReSharper disable once UnusedMember.Global сейчас не используется
+        public decimal TicketPrice { get; set; }
     }
 }

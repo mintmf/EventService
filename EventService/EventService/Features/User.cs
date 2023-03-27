@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace EventService.Models
+namespace EventService.Features
 {
     /// <summary>
     /// Класс пользователя
@@ -11,7 +11,7 @@ namespace EventService.Models
         /// <summary>
         /// ID пользователя
         /// </summary>
-        
+
         public Guid UserId { get; set; }
 
         /// <summary>
