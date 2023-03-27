@@ -4,7 +4,6 @@ using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using SC.Internship.Common.ScResult;
 using System.Net.Http.Headers;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace EventService.Services
 {
@@ -47,11 +46,11 @@ namespace EventService.Services
         public async Task<bool> IsSpaceExists(Guid? spaceId)
         {
             var requestUri = _config.Address
-                + _config.IsSpaceExistsEndpoint.Replace("{spaceId}", spaceId.ToString());
+                + _config.IsSpaceExistsEndpoint?.Replace("{spaceId}", spaceId.ToString());
 
             _logger.LogInformation($"GET {requestUri} Parameters: {spaceId}");
 
-            var token = _contextAccessor?.HttpContext?.Request.Headers[HeaderNames.Authorization].FirstOrDefault();
+            var token = _contextAccessor.HttpContext?.Request.Headers[HeaderNames.Authorization].FirstOrDefault();
 
             if (AuthenticationHeaderValue.TryParse(token, out var headerValue) &&
                 headerValue.Scheme == "Bearer")

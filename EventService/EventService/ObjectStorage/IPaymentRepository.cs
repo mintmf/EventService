@@ -11,6 +11,7 @@ namespace EventService.ObjectStorage
         /// Создание платежа
         /// </summary>
         /// <returns></returns>
+        // ReSharper disable once UnusedMember.Global сейчас не используется
         public Payment CreatePayment();
     }
 }

@@ -1,9 +1,18 @@
 ﻿namespace EventService.Infrastracture
 {
+    /// <summary>
+    /// Конфигурация RabbitMQ
+    /// </summary>
     public class RabbitMqConfig
     {
-        public string Address { get; set; }
+        /// <summary>
+        /// Адрес
+        /// </summary>
+        public string? Address { get; set; }
 
-        public string QueueName { get; set; }
+        /// <summary>
+        /// Имя очереди
+        /// </summary>
+        public string? QueueName { get; set; }
     }
 }

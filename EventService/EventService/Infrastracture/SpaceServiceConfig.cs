@@ -8,11 +8,11 @@
         /// <summary>
         /// Адрес
         /// </summary>
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
         /// <summary>
         /// Адрес метода проверки существования пространства
         /// </summary>
-        public string IsSpaceExistsEndpoint { get; set; }
+        public string? IsSpaceExistsEndpoint { get; set; }
     }
 }

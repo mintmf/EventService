@@ -3,6 +3,7 @@
     /// <summary>
     /// Состояние платежа
     /// </summary>
+    // ReSharper disable UnusedMember.Global сечас не исползуется
     public enum PaymentState
     {
         /// <summary>

@@ -6,7 +6,6 @@ using EventService.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
 using SC.Internship.Common.ScResult;
 
 namespace EventService.Features.TicketFeature
@@ -48,10 +47,8 @@ namespace EventService.Features.TicketFeature
             var result = await _mediator.Send(new AddFreeTicketsCommand { Parameters = parameters });
 
             _logger.LogInformation($"\nВремя: {DateTime.Now}\n" +
-                $"Имя метода: POST AddFreeTickets\n" +
+                "Имя метода: POST AddFreeTickets\n" +
                 $"Параметры: {parameters.NumberOfTickets}, {parameters.EventId}\n");
-
-            var accessToken = Request.Headers[HeaderNames.Authorization];
 
             return result;
         }

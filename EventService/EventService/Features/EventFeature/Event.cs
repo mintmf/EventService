@@ -60,6 +60,7 @@ namespace EventService.Features.EventFeature
         /// <summary>
         /// Цена билета
         /// </summary>
+        // ReSharper disable once UnusedMember.Global сейчас не используется
         public decimal TicketPrice { get; set; }
     }
 }

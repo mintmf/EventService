@@ -211,7 +211,7 @@ namespace EventService.ObjectStorage
             var updateDefinition = Builders<Event>.Update
                     .Set(e => e.PreviewImageId, Guid.Empty); 
 
-            var result = await collection.UpdateManyAsync(updateFilter, updateDefinition);
+            await collection.UpdateManyAsync(updateFilter, updateDefinition);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using EventService.Features;
-using EventService.Infrastracture;
+﻿using EventService.Infrastracture;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
@@ -47,11 +46,11 @@ namespace EventService.Services
         public async Task<bool> IsImageExists(Guid? imageId)
         {
             var requestUri = _config.Address
-                + _config.IsImageExistsEndpoint.Replace("{imageId}", imageId.ToString());
+                + _config.IsImageExistsEndpoint?.Replace("{imageId}", imageId.ToString());
 
             _logger.LogInformation($"GET {requestUri} Parameters: {imageId}");
 
-            var token = _contextAccessor?.HttpContext?.Request.Headers[HeaderNames.Authorization].FirstOrDefault();
+            var token = _contextAccessor.HttpContext?.Request.Headers[HeaderNames.Authorization].FirstOrDefault();
 
             if (AuthenticationHeaderValue.TryParse(token, out var headerValue) &&
                 headerValue.Scheme == "Bearer")

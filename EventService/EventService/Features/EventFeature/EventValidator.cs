@@ -13,6 +13,7 @@ namespace EventService.Features.EventFeature
         /// </summary>
         /// <param name="imageService"></param>
         /// <param name="spaceService"></param>
+        // ReSharper disable UnusedParameter.Local
         public EventValidator(IImageService imageService, ISpaceService spaceService)
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
@@ -31,17 +32,11 @@ namespace EventService.Features.EventFeature
                 .NotNull()
                 .WithErrorCode("400")
                 .WithMessage("Пространство не может быть null")
-                .MustAsync(async (id, cancellation) =>
-                {
-                    return await spaceService.IsSpaceExists(id);
-                })
+                .MustAsync(async (id, cancellation) => await spaceService.IsSpaceExists(id))
                 .WithMessage("Такого пространства не существует");
 
             RuleFor(x => x.PreviewImageId)
-                .MustAsync(async (id, cancellation) =>
-                {
-                    return await imageService.IsImageExists(id);
-                })
+                .MustAsync(async (id, cancellation) => await imageService.IsImageExists(id))
                 .WithMessage("Отсутствует изображение мероприятия");
         }
     }

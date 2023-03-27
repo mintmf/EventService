@@ -7,7 +7,16 @@ namespace EventService.ObjectStorage
     /// </summary>
     public class PaymentRepository : IPaymentRepository
     {
-        private List<Payment> _paymentList = new();
+        private readonly List<Payment> _paymentList;
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="paymentList"></param>
+        public PaymentRepository(List<Payment> paymentList)
+        {
+            _paymentList = paymentList;
+        }
 
         /// <summary>
         /// Создание платежа

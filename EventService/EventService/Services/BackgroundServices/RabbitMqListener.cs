@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using EventService.Features;
 using EventService.ObjectStorage;
-using MongoDB.Driver;
 
 namespace EventService.Services.BackgroundServices
 {
@@ -15,8 +14,8 @@ namespace EventService.Services.BackgroundServices
     /// </summary>
     public class RabbitMqListener : BackgroundService
     {
-        private IConnection _connection;
-        private IModel _channel;
+        private readonly IConnection _connection;
+        private readonly IModel _channel;
 
         private readonly RabbitMqConfig _rabbitMqParameters;
         private readonly IServiceProvider _serviceProvider;
@@ -59,6 +58,7 @@ namespace EventService.Services.BackgroundServices
 
             var consumer = new EventingBasicConsumer(_channel);
 
+            // ReSharper disable once UnusedParameter.Local сейчас не используется
             consumer.Received += (ch, ea) =>
             {
                 var content = Encoding.UTF8.GetString(ea.Body.ToArray());
@@ -105,24 +105,22 @@ namespace EventService.Services.BackgroundServices
                 return false;
             }
 
-            using (IServiceScope scope = _serviceProvider.CreateScope())
+            using IServiceScope scope = _serviceProvider.CreateScope();
+            IEventRepository eventRepository =
+                scope.ServiceProvider.GetRequiredService<IEventRepository>();
+
+            if (rabbitMqEvent.Type == RabbitMqEventType.SpaceDelete)
             {
-                IEventRepository eventRepository =
-                    scope.ServiceProvider.GetRequiredService<IEventRepository>();
+                eventRepository.DeleteEventsBySpaceAsync(rabbitMqEvent.Id);
 
-                if (rabbitMqEvent.Type == RabbitMqEventType.SpaceDelete)
-                {
-                    eventRepository.DeleteEventsBySpaceAsync(rabbitMqEvent.Id);
+                return true;
+            }
 
-                    return true;
-                }
+            if (rabbitMqEvent.Type == RabbitMqEventType.ImageDelete)
+            {
+                eventRepository.DeleteImageAsync(rabbitMqEvent.Id);
 
-                if (rabbitMqEvent.Type == RabbitMqEventType.ImageDelete)
-                {
-                    eventRepository.DeleteImageAsync(rabbitMqEvent.Id);
-
-                    return true;
-                }
+                return true;
             }
 
             return false;

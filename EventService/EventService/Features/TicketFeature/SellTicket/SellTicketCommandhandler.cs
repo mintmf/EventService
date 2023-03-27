@@ -1,23 +1,21 @@
 ﻿using EventService.Features.TicketFeature.GiveUserATicket;
-using EventService.Infrastracture;
 using EventService.ObjectStorage;
 using MediatR;
-using Microsoft.Extensions.Options;
-using MongoDB.Bson.IO;
 using SC.Internship.Common.Exceptions;
 using SC.Internship.Common.ScResult;
-using Newtonsoft.Json;
 using EventService.Services;
+using JetBrains.Annotations;
 
 namespace EventService.Features.TicketFeature.SellTicket
 {
     /// <summary>
     /// Класс обработчика команды продажи пользователю билета
     /// </summary>
+    [UsedImplicitly]
     public class SellTicketCommandHandler : IRequestHandler<SellTicketCommand, ScResult>
     {
-        private ITicketRepository _ticketRepository;
-        private IPaymentService _paymentService;
+        private readonly ITicketRepository _ticketRepository;
+        private readonly IPaymentService _paymentService;
 
         /// <summary>
         /// Конструктор
@@ -47,7 +45,7 @@ namespace EventService.Features.TicketFeature.SellTicket
 
             try
             {
-                var result = await _ticketRepository.GiveUserAticketAsync(
+                await _ticketRepository.GiveUserAticketAsync(
                     command.TicketId, new GiveUserATicketParameters { UserId = command.UserId });
             }
             catch (Exception ex)
@@ -57,7 +55,7 @@ namespace EventService.Features.TicketFeature.SellTicket
                 throw new ScException(ex, "Ошибка при попытке передачи пользователю билета");
             }
 
-            var res = await _paymentService.ConfirmPaymentAsync(payment.PaymentId);
+            await _paymentService.ConfirmPaymentAsync(payment.PaymentId);
 
             return new ScResult();
         }

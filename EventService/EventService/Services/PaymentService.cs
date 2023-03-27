@@ -11,11 +11,11 @@ namespace EventService.Services
     /// </summary>
     public class PaymentService : IPaymentService
     {
-        private HttpClient _client;
+        private readonly HttpClient _client;
 
-        private PaymentServiceConfig _config;
+        private readonly PaymentServiceConfig _config;
 
-        private ILogger<PaymentService> _logger;
+        private readonly ILogger<PaymentService> _logger;
 
         private readonly IHttpContextAccessor _contextAccessor;
 
@@ -47,7 +47,7 @@ namespace EventService.Services
 
             _logger.LogInformation($"POST {requestUri} Parameters: NULL");
 
-            var token = _contextAccessor?.HttpContext?.Request.Headers[HeaderNames.Authorization].FirstOrDefault();
+            var token = _contextAccessor.HttpContext?.Request.Headers[HeaderNames.Authorization].FirstOrDefault();
 
             if (AuthenticationHeaderValue.TryParse(token, out var headerValue) && 
                 headerValue.Scheme == "Bearer")
@@ -73,11 +73,11 @@ namespace EventService.Services
         /// <returns></returns>
         public async Task<Payment> ConfirmPaymentAsync(Guid paymentId)
         {
-            var requestUri = _config.Address + _config.ConfirmPaymentEndpoint.Replace("{paymentId}", paymentId.ToString());
+            var requestUri = _config.Address + _config.ConfirmPaymentEndpoint?.Replace("{paymentId}", paymentId.ToString());
 
             _logger.LogInformation($"POST {requestUri} Parameters: {paymentId}");
 
-            var token = _contextAccessor?.HttpContext?.Request.Headers[HeaderNames.Authorization].FirstOrDefault();
+            var token = _contextAccessor.HttpContext?.Request.Headers[HeaderNames.Authorization].FirstOrDefault();
 
             if (AuthenticationHeaderValue.TryParse(token, out var headerValue) &&
                 headerValue.Scheme == "Bearer")
@@ -102,11 +102,11 @@ namespace EventService.Services
         /// <returns></returns>
         public async Task<Payment> CancelPaymentAsync(Guid paymentId)
         {
-            var requestUri = _config.Address + _config.CancelPaymentEndpoint.Replace("{paymentId}", paymentId.ToString());
+            var requestUri = _config.Address + _config.CancelPaymentEndpoint?.Replace("{paymentId}", paymentId.ToString());
 
             _logger.LogInformation($"POST {requestUri} Parameters: {paymentId}");
 
-            var token = _contextAccessor?.HttpContext?.Request.Headers[HeaderNames.Authorization].FirstOrDefault();
+            var token = _contextAccessor.HttpContext?.Request.Headers[HeaderNames.Authorization].FirstOrDefault();
 
             if (AuthenticationHeaderValue.TryParse(token, out var headerValue) &&
                 headerValue.Scheme == "Bearer")

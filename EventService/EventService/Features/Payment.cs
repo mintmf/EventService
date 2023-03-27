@@ -3,6 +3,7 @@
     /// <summary>
     /// Класс платежной операции
     /// </summary>
+    // ReSharper disable UnusedMember.Global сейчас не используется
     public class Payment
     {
         /// <summary>
