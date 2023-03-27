@@ -13,7 +13,9 @@
 
 >`cd .. && docker build -t eventservice -f EventService/Dockerfile .`
 
->`cd EventService && docker compose up --detach && start http://localhost:5010`
+>`cd EventService && docker compose up --detach && start http://localhost:5010`  
+
+ **для загрузки страницы может потребоваться время*
 
 3) Для получения токена необходима отправить запрос POST по адресу 
 >`http://localhost:5000/connect/token`
