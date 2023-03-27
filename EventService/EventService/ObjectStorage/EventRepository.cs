@@ -182,5 +182,36 @@ namespace EventService.ObjectStorage
 
             return await Task.FromResult(true);
         }
+
+        /// <summary>
+        /// Удаление мероприятий
+        /// </summary>
+        /// <param name="spaceId"></param>
+        /// <returns></returns>
+        public async Task DeleteEventsBySpaceAsync(Guid spaceId)
+        {
+            var db = _mongoClient.GetDatabase(_config.Database);
+            var collection = db.GetCollection<Event>(_config.EventsCollection);
+            var deleteFilter = Builders<Event>.Filter.Eq("SpaceId", spaceId);
+
+            await collection.DeleteManyAsync(deleteFilter);
+        }
+
+        /// <summary>
+        /// Удалить изображение
+        /// </summary>
+        /// <param name="imageId"></param>
+        /// <returns></returns>
+        public async Task DeleteImageAsync(Guid imageId)
+        {
+            var db = _mongoClient.GetDatabase(_config.Database);
+            var collection = db.GetCollection<Event>(_config.EventsCollection);
+            var updateFilter = Builders<Event>.Filter.Eq("PreviewImageId", imageId);
+
+            var updateDefinition = Builders<Event>.Update
+                    .Set(e => e.PreviewImageId, Guid.Empty); 
+
+            var result = await collection.UpdateManyAsync(updateFilter, updateDefinition);
+        }
     }
 }

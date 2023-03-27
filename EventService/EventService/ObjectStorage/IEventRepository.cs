@@ -51,5 +51,19 @@ namespace EventService.ObjectStorage
         /// <param name="eventId"></param>
         /// <returns></returns>
         Task<bool> CheckIfPlaceIsAvailable(int place, Guid eventId);
+
+        /// <summary>
+        /// Удаление мерроприятий
+        /// </summary>
+        /// <param name="spaceId"></param>
+        /// <returns></returns>
+        Task DeleteEventsBySpaceAsync(Guid spaceId);
+
+        /// <summary>
+        /// Удалить изображение
+        /// </summary>
+        /// <param name="imageId"></param>
+        /// <returns></returns>
+        Task DeleteImageAsync(Guid imageId);
     }
 }

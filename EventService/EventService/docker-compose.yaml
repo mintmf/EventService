@@ -8,6 +8,7 @@ services:
     - "ImageService__Address=http://imageservice:80"
     - "PaymentService__Address=http://paymentservice:80"
     - "IdentityServer__IntrospectionEndpoint=http://identity:80/connect/introspect"
+    - "RabbitMqParameters__Address=rabbitmq"
     container_name: eventservice
     depends_on:        
     - mongodb    
@@ -15,6 +16,7 @@ services:
     - imageservice
     - paymentservice
     - identity    
+    - rabbitmq
     ports:
     - 5010:80        
     restart: always    
@@ -82,4 +84,10 @@ services:
     - MONGO_INITDB_ROOT_PASSWORD=foobar        
     ports:
     - 27017:27017              
+    restart: always
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+    - 5672:5672
+    - 15672:15672
     restart: always

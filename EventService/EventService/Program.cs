@@ -10,6 +10,7 @@ using MongoDB.Driver;
 using EventService.Infrastracture;
 using Microsoft.AspNetCore.HttpLogging;
 using Polly;
+using EventService.Services.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -97,12 +98,16 @@ builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<IMongoClient, EventsMongoClient>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IRabbitMqService, RabbitMqService>();
 
 builder.Services.Configure<IdentityServerConfig>(builder.Configuration.GetSection("IdentityServer"));
 builder.Services.Configure<EventsMongoConfig>(builder.Configuration.GetSection("MongoParameters"));
 builder.Services.Configure<ImageServiceConfig>(builder.Configuration.GetSection("ImageService"));
 builder.Services.Configure<SpaceServiceConfig>(builder.Configuration.GetSection("SpaceService"));
 builder.Services.Configure<PaymentServiceConfig>(builder.Configuration.GetSection("PaymentService"));
+builder.Services.Configure<RabbitMqConfig>(builder.Configuration.GetSection("RabbitMqParameters"));
+
+builder.Services.AddHostedService<RabbitMqListener>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
