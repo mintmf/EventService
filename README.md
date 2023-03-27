@@ -16,7 +16,7 @@
 >`cd EventService && docker compose up`
 
 3) Для получения токена необходима отправить запрос POST по адресу 
->`http://localhost/connect/token`
+>`http://localhost:5000/connect/token`
  -   header:
         -   Authorization: Bearer Token
  -   body (x-www-form-urlencoded) :
