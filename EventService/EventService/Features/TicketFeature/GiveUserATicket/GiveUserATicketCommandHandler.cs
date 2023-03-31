@@ -1,6 +1,7 @@
 ﻿using EventService.ObjectStorage;
 using JetBrains.Annotations;
 using MediatR;
+using SC.Internship.Common.Exceptions;
 using SC.Internship.Common.ScResult;
 
 namespace EventService.Features.TicketFeature.GiveUserATicket
@@ -11,15 +12,15 @@ namespace EventService.Features.TicketFeature.GiveUserATicket
     [UsedImplicitly]
     public class GiveUserATicketCommandHandler : IRequestHandler<GiveUserATicketCommand, ScResult<Ticket>>
     {
-        private readonly ITicketRepository _ticketRepository;
+        private readonly IEventRepository _eventRepository;
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="ticketRepository"></param>
-        public GiveUserATicketCommandHandler(ITicketRepository ticketRepository)
+        /// <param name="eveRepository"></param>
+        public GiveUserATicketCommandHandler(IEventRepository eveRepository)
         {
-            _ticketRepository = ticketRepository;
+            _eventRepository = eveRepository; 
         }
 
         /// <summary>
@@ -31,11 +32,29 @@ namespace EventService.Features.TicketFeature.GiveUserATicket
         /// <exception cref="NotImplementedException"></exception>
         public async Task<ScResult<Ticket>> Handle(GiveUserATicketCommand request, CancellationToken cancellationToken)
         {
-            var result = await _ticketRepository.GiveUserAticketAsync(request.TicketId, request.Parameters);
+            var events = await _eventRepository.GetEventListAsync();
+
+            var foundEvent = events.Find(e => e.Tickets?.Find(t => t.Id == request.TicketId) != null);
+
+            if (foundEvent?.Tickets == null)
+            {
+                throw new ScException("Мероприятия с таким билетом не существует");
+            }
+
+            var ticket = foundEvent.Tickets.Where(t => t.Id == request.TicketId).First();
+
+            if (ticket == null)
+            {
+                throw new ScException("Такого билета не существует");
+            }
+
+            ticket.Owner = request.Parameters.UserId;
+
+            await _eventRepository.UpdateEventAsync(foundEvent.EventId, foundEvent);
 
             return new ScResult<Ticket>
             {
-                Result = result
+                Result = ticket
             };
         }
     }

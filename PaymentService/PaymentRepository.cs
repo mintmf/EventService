@@ -16,7 +16,7 @@
             var payment = new Payment
             {
                 PaymentId = Guid.NewGuid(),
-                DateCreation = DateTime.Now
+                DateCreation = DateTimeOffset.Now
             };
 
             _paymentList.Add(payment);

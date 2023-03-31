@@ -15,14 +15,14 @@ namespace EventService.Features.EventFeature.CreateEvent
         /// <param name="imageService"></param>
         public CreateEventValidator(ISpaceService spaceService, IImageService imageService)
         {
-            RuleFor(x => x.Event.StartTime)
+            RuleFor(x => x.Event.EndTime)
                 .NotNull()
                 .WithMessage("Время начала мероприятия не может быть null");
 
-            RuleFor(x => x.Event.EndTime)
+            RuleFor(x => x.Event.StartTime)
                 .NotNull()
                 .WithMessage("Время конца мероприятия не может быть null")
-                .LessThan(x => x.Event.StartTime)
+                .LessThan(x => x.Event.EndTime)
                 .WithMessage("Время начала мероприятия должно быть раньше времени окончания");
 
             RuleFor(x => x.Event.SpaceId)

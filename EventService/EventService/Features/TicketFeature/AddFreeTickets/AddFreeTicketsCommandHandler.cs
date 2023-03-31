@@ -1,6 +1,7 @@
 ﻿using EventService.ObjectStorage;
 using JetBrains.Annotations;
 using MediatR;
+using SC.Internship.Common.Exceptions;
 using SC.Internship.Common.ScResult;
 
 namespace EventService.Features.TicketFeature.AddFreeTickets
@@ -11,15 +12,15 @@ namespace EventService.Features.TicketFeature.AddFreeTickets
     [UsedImplicitly]
     public class AddFreeTicketsCommandHandler : IRequestHandler<AddFreeTicketsCommand, ScResult<List<Ticket>>>
     {
-        private readonly ITicketRepository _ticketRepository;
+        private readonly IEventRepository _eventRepository;
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="ticketRepository"></param>
-        public AddFreeTicketsCommandHandler(ITicketRepository ticketRepository)
+        /// <param name="eventRepository"></param>
+        public AddFreeTicketsCommandHandler(IEventRepository eventRepository)
         {
-            _ticketRepository = ticketRepository;
+            _eventRepository = eventRepository;
         }
 
         /// <summary>
@@ -30,10 +31,37 @@ namespace EventService.Features.TicketFeature.AddFreeTickets
         /// <returns></returns>
         public async Task<ScResult<List<Ticket>>> Handle(AddFreeTicketsCommand request, CancellationToken cancellationToken)
         {
-            var result = await _ticketRepository.AddFreeTicketsAsync(request.Parameters);
+            var result = await _eventRepository.GetEventAsync(request.Parameters.EventId);
+            if (result == null)
+            {
+                throw new ScException("Мероприятие не найдено");
+            }
+            /*if (result.Tickets != null)
+            {
+                throw new ScException("У мероприятия уже есть билеты");
+            }*/
+
+            var newTickets = new List<Ticket>();
+
+            for (var i = 0; i < request.Parameters.NumberOfTickets; i++)
+            {
+                if (result.PlacesAvailable)
+                {
+                    newTickets.Add(new Ticket { Id = Guid.NewGuid() , Place = i + 1});
+                }
+                else
+                {
+                    newTickets.Add(new Ticket { Id = Guid.NewGuid() });
+                }
+            }
+
+            result.Tickets = newTickets;
+
+            await _eventRepository.UpdateEventAsync(request.Parameters.EventId, result);
+
             return new ScResult<List<Ticket>>
             {
-                Result = result
+                Result = result.Tickets
             };
         }
     }

@@ -21,7 +21,7 @@ namespace EventService.ObjectStorage
         /// <param name="eventId"></param>
         /// <param name="sourceEvent"></param>
         /// <returns></returns>
-        Task<Event> UpdateEventAsync(Guid eventId, Event sourceEvent);
+        Task<Event> UpdateEventAsync(Guid? eventId, Event sourceEvent);
 
         /// <summary>
         /// Удаление мероприятия
@@ -37,22 +37,6 @@ namespace EventService.ObjectStorage
         Task<List<Event>> GetEventListAsync();
 
         /// <summary>
-        /// Добавить бесплатные билеты на мероприятие
-        /// </summary>
-        /// <param name="eventId"></param>
-        /// <param name="tickets"></param>
-        /// <returns></returns>
-        Task AddTicketsToAnEventAsync(Guid eventId, List<Ticket> tickets);
-
-        /// <summary>
-        /// Проверить номер места на мероприятие
-        /// </summary>
-        /// <param name="place"></param>
-        /// <param name="eventId"></param>
-        /// <returns></returns>
-        Task<bool> CheckIfPlaceIsAvailable(int place, Guid eventId);
-
-        /// <summary>
         /// Удаление мерроприятий
         /// </summary>
         /// <param name="spaceId"></param>
@@ -65,5 +49,12 @@ namespace EventService.ObjectStorage
         /// <param name="imageId"></param>
         /// <returns></returns>
         Task DeleteImageAsync(Guid imageId);
+
+        /// <summary>
+        /// Получить заданное мероприятие
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
+        Task<Event> GetEventAsync(Guid eventId);
     }
 }

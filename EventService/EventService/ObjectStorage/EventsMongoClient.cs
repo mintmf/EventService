@@ -1,6 +1,7 @@
 ﻿using EventService.Features.EventFeature;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using SC.Internship.Common.Exceptions;
 
 namespace EventService.ObjectStorage
 {

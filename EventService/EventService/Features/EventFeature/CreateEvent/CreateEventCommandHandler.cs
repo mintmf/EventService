@@ -13,17 +13,14 @@ namespace EventService.Features.EventFeature.CreateEvent
     public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, ScResult<Event>>
     {
         private readonly IEventRepository _eventRepository;
-        private readonly IValidator<Event> _validator;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="eventRepository"></param>
-        /// <param name="validator"></param>
-        public CreateEventCommandHandler(IEventRepository eventRepository, IValidator<Event> validator)
+        public CreateEventCommandHandler(IEventRepository eventRepository)
         {
             _eventRepository = eventRepository;
-            _validator = validator;
         }
 
         /// <summary>
@@ -34,8 +31,8 @@ namespace EventService.Features.EventFeature.CreateEvent
         /// <returns></returns>
         public async Task<ScResult<Event>> Handle(CreateEventCommand command, CancellationToken cancellationToken)
         {
-            await _validator.ValidateAndThrowAsync(command.Event, cancellationToken);
-                
+            command.Event.EventId = Guid.NewGuid();
+
             var createdEvent = await _eventRepository.AddEventAsync(command.Event);
 
             return new ScResult<Event>

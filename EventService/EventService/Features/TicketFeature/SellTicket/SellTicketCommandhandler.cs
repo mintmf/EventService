@@ -14,18 +14,18 @@ namespace EventService.Features.TicketFeature.SellTicket
     [UsedImplicitly]
     public class SellTicketCommandHandler : IRequestHandler<SellTicketCommand, ScResult>
     {
-        private readonly ITicketRepository _ticketRepository;
         private readonly IPaymentService _paymentService;
+        private readonly IEventRepository _eventRepository;
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="ticketRepository"></param>
         /// <param name="paymentService"></param>
-        public SellTicketCommandHandler(ITicketRepository ticketRepository, IPaymentService paymentService)
+        /// <param name="eventRepository"></param>
+        public SellTicketCommandHandler(IPaymentService paymentService, IEventRepository eventRepository)
         {
-            _ticketRepository = ticketRepository;
             _paymentService = paymentService;
+            _eventRepository = eventRepository; 
         }
 
         /// <summary>
@@ -45,8 +45,25 @@ namespace EventService.Features.TicketFeature.SellTicket
 
             try
             {
-                await _ticketRepository.GiveUserAticketAsync(
-                    command.TicketId, new GiveUserATicketParameters { UserId = command.UserId });
+                var events = await _eventRepository.GetEventListAsync();
+
+                var foundEvent = events.Find(e => e.Tickets?.Find(t => t.Id == command.TicketId) != null);
+
+                if (foundEvent?.Tickets == null)
+                {
+                    throw new ScException("Мероприятия с таким билетом не существует");
+                }
+
+                var ticket = foundEvent.Tickets.Where(t => t.Id == command.TicketId).First();
+
+                if (ticket == null)
+                {
+                    throw new ScException("Такого билета не существует");
+                }
+
+                ticket.Owner = command.UserId;
+
+                await _eventRepository.UpdateEventAsync(foundEvent.EventId, foundEvent);
             }
             catch (Exception ex)
             {

@@ -1,6 +1,7 @@
 ﻿using EventService.ObjectStorage;
 using JetBrains.Annotations;
 using MediatR;
+using SC.Internship.Common.Exceptions;
 using SC.Internship.Common.ScResult;
 
 namespace EventService.Features.TicketFeature.CheckIfUserHasATicket
@@ -11,15 +12,15 @@ namespace EventService.Features.TicketFeature.CheckIfUserHasATicket
     [UsedImplicitly]
     public class CheckIfUserHasATicketCommandHandler : IRequestHandler<CheckIfUserHasATicketCommand, ScResult<bool>>
     {
-        private readonly ITicketRepository _ticketRepository;
+        private readonly IEventRepository _eventRepository;
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="ticketRepository"></param>
-        public CheckIfUserHasATicketCommandHandler(ITicketRepository ticketRepository)
+        /// <param name="eventRepository"></param>
+        public CheckIfUserHasATicketCommandHandler(IEventRepository eventRepository)
         {
-            _ticketRepository = ticketRepository;
+            _eventRepository = eventRepository;
         }
 
         /// <summary>
@@ -31,11 +32,17 @@ namespace EventService.Features.TicketFeature.CheckIfUserHasATicket
         /// <exception cref="NotImplementedException"></exception>
         public async Task<ScResult<bool>> Handle(CheckIfUserHasATicketCommand request, CancellationToken cancellationToken)
         {
-            var result = await _ticketRepository.CheckIfUserHasATicket(request.UserId, request.EventId);
+            var foundEvent = await  _eventRepository.GetEventAsync(request.EventId);
+
+            if (foundEvent == null)
+            {
+                throw new ScException("Такого мероприятия не существует");
+            }
+            var ticketOwner = foundEvent.Tickets?.Find(t => t.Owner == request.UserId);
 
             return new ScResult<bool>
             {
-                Result = result
+                Result = ticketOwner != null,
             };
         }
     }

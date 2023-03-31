@@ -16,9 +16,8 @@ namespace EventService.Features.EventFeature
     /// </summary>
     [ApiController]
     [Route("events")]
-    //[Authorize]
+    [Authorize]
     [TypeFilter(typeof(CommonExceptionFilter))]
-    //[Authorize]
     public class EventController : ControllerBase
     {
         private readonly IMediator _mediatr;
@@ -91,7 +90,7 @@ namespace EventService.Features.EventFeature
         /// Удаление мероприятия
         /// </summary>
         /// <param name="eventId">ID мероприятия</param>
-        /// <response code="200">Успешное удаление</response>
+        /// <response code="204">Успешное удаление</response>
         /// <response code="500">Внутренняя ошибка сервера</response>
         [HttpDelete]
         [Route("{eventId}")]

@@ -13,17 +13,14 @@ namespace EventService.Features.EventFeature.UpdateEvent
     [UsedImplicitly]
     public class UpdateEventCommandHandler : IRequestHandler<UpdateEventCommand, Event>
     {
-        private readonly EventsMongoConfig _config;
         private readonly IEventRepository _eventRepository;
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="config"></param>
         /// <param name="eventRepository"></param>
-        public UpdateEventCommandHandler(IOptions<EventsMongoConfig> config, IEventRepository eventRepository)
+        public UpdateEventCommandHandler(IEventRepository eventRepository)
         {
-            _config = config.Value;
             _eventRepository = eventRepository;
         }
 
@@ -35,6 +32,8 @@ namespace EventService.Features.EventFeature.UpdateEvent
         /// <returns></returns>
         public async Task<Event> Handle(UpdateEventCommand command, CancellationToken cancellationToken)
         {
+            command.Event.EventId = command.EventId;
+
             var result = await _eventRepository.UpdateEventAsync(command.EventId, command.Event);
 
             return await Task.FromResult(result);
