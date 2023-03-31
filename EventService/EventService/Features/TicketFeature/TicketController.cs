@@ -46,7 +46,7 @@ namespace EventService.Features.TicketFeature
         {
             var result = await _mediator.Send(new AddFreeTicketsCommand { Parameters = parameters });
 
-            _logger.LogInformation($"\nВремя: {DateTime.Now}\n" +
+            _logger.LogInformation($"\nВремя: {DateTimeOffset.Now}\n" +
                 "Имя метода: POST AddFreeTickets\n" +
                 $"Параметры: {parameters.NumberOfTickets}, {parameters.EventId}\n");
 
@@ -80,7 +80,7 @@ namespace EventService.Features.TicketFeature
         /// <response code="200">Успех</response>
         /// <response code="400">Неверные входные данные</response>
         [HttpPost]
-        [Route("check")]
+        [Route("appointment")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ScResult<bool>> CheckIfUserHasATicket([FromBody] CheckIfUserHasATicketParameters parameters)
@@ -104,7 +104,7 @@ namespace EventService.Features.TicketFeature
         /// <response code="400">Неверные входные данные</response>
         /// <returns></returns>
         [HttpPost]
-        [Route("{ticketId}/sell/{userId}")]
+        [Route("{ticketId}/owner/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ScResult> SellTicket([FromRoute] Guid ticketId, [FromRoute] Guid userId)

@@ -33,8 +33,8 @@ public class CreateEventTest
         // Arrange
         var mockEvent = new Event 
         { 
-            EndTime = DateTime.Now, 
-            StartTime = DateTime.Now, 
+            EndTime = DateTimeOffset.Now, 
+            StartTime = DateTimeOffset.Now, 
             SpaceId = Guid.Empty
         };
 
@@ -54,8 +54,8 @@ public class CreateEventTest
         // Arrange
         var mockEvent = new Event
         {
-            EndTime = DateTime.Now,
-            StartTime = DateTime.MinValue,
+            EndTime = DateTimeOffset.Now,
+            StartTime = DateTimeOffset.MinValue,
             SpaceId = null
         };
 
@@ -75,8 +75,8 @@ public class CreateEventTest
         // Arrange
         var mockEvent = new Event
         {
-            EndTime = DateTime.MaxValue,
-            StartTime = DateTime.MinValue,
+            EndTime = DateTimeOffset.MaxValue,
+            StartTime = DateTimeOffset.MinValue,
             SpaceId = Guid.NewGuid(),
             PreviewImageId = Guid.NewGuid(),
             Description = "Description",

@@ -80,6 +80,5 @@ namespace EventService.ObjectStorage
             }
             throw new ScException("Такого мероприятия не существует");
         }
-
     }
 }

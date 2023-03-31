@@ -19,17 +19,17 @@
         /// <summary>
         /// Дата создания платежа
         /// </summary>
-        public DateTime DateCreation { get; set; }
+        public DateTimeOffset DateCreation { get; set; }
         
         /// <summary>
         /// Дата подтверждения плтежа 
         /// </summary>
-        public DateTime DateConfirmation { get; set; }
+        public DateTimeOffset DateConfirmation { get; set; }
         
         /// <summary>
         /// Дата отмены платежа
         /// </summary>
-        public DateTime DateConcellation { get; set; }
+        public DateTimeOffset DateCancellation { get; set; }
 
         /// <summary>
         /// Описание

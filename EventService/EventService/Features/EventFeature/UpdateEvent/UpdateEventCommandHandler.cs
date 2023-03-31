@@ -1,7 +1,9 @@
 ﻿using EventService.ObjectStorage;
-using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using SC.Internship.Common.Exceptions;
 
 namespace EventService.Features.EventFeature.UpdateEvent
 {
@@ -11,17 +13,17 @@ namespace EventService.Features.EventFeature.UpdateEvent
     [UsedImplicitly]
     public class UpdateEventCommandHandler : IRequestHandler<UpdateEventCommand, Event>
     {
+        private readonly EventsMongoConfig _config;
         private readonly IEventRepository _eventRepository;
-        private readonly IValidator<Event> _validator;
 
         /// <summary>
         /// Конструктор
         /// </summary>
+        /// <param name="config"></param>
         /// <param name="eventRepository"></param>
-        /// <param name="validator"></param>
-        public UpdateEventCommandHandler(IEventRepository eventRepository, IValidator<Event> validator)
+        public UpdateEventCommandHandler(IOptions<EventsMongoConfig> config, IEventRepository eventRepository)
         {
-            _validator = validator;
+            _config = config.Value;
             _eventRepository = eventRepository;
         }
 
@@ -33,9 +35,9 @@ namespace EventService.Features.EventFeature.UpdateEvent
         /// <returns></returns>
         public async Task<Event> Handle(UpdateEventCommand command, CancellationToken cancellationToken)
         {
-            await _validator.ValidateAndThrowAsync(command.Event, cancellationToken);
+            var result = await _eventRepository.UpdateEventAsync(command.EventId, command.Event);
 
-            return await _eventRepository.UpdateEventAsync(command.EventId, command.Event);
+            return await Task.FromResult(result);
         }
     }
 }
