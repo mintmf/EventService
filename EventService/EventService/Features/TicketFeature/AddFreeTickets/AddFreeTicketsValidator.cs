@@ -1,24 +1,21 @@
 ﻿using EventService.ObjectStorage;
 using FluentValidation;
+using JetBrains.Annotations;
 
-namespace EventService.Features.TicketFeature.AddFreeTickets
+namespace EventService.Features.TicketFeature.AddFreeTickets;
+
+/// <summary>
+/// Валидатор добавления билетов к мероприятию
+/// </summary>
+[UsedImplicitly]
+public class AddFreeTicketsValidator : AbstractValidator<AddFreeTicketsCommand>
 {
     /// <summary>
-    /// Валидатор добавления билетов к мероприятию
+    /// Правила валидации
     /// </summary>
-    public class AddFreeTicketsValidator : AbstractValidator<AddFreeTicketsCommand>
+    /// <param name="client"></param>
+    public AddFreeTicketsValidator(IEventRepository client)
     {
-        private readonly IEventRepository _client;
-
-        /// <summary>
-        /// Правила валидации
-        /// </summary>
-        /// <param name="client"></param>
-        public AddFreeTicketsValidator(IEventRepository client)
-        {
-            _client = client;
-
-            RuleFor(e => _client.GetEventAsync(e.Parameters.EventId).Result.Tickets).Null();
-        }
+        RuleFor(e => client.GetEventAsync(e.Parameters.EventId).Result.Tickets).Null();
     }
 }

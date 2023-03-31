@@ -1,24 +1,23 @@
 ﻿using MediatR;
 
-namespace EventService.Features.EventFeature.DeleteEvent
+namespace EventService.Features.EventFeature.DeleteEvent;
+
+/// <summary>
+/// 
+/// </summary>
+public class DeleteEventCommand : IRequest
 {
     /// <summary>
-    /// 
+    /// ID мероприятия
     /// </summary>
-    public class DeleteEventCommand : IRequest
-    {
-        /// <summary>
-        /// ID мероприятия
-        /// </summary>
-        public Guid EventId { get; set; }
+    public Guid EventId { get; set; }
 
-        /// <summary>
-        /// Конструктор
-        /// </summary>
-        /// <param name="eventId"></param>
-        public DeleteEventCommand(Guid eventId)
-        {
-            EventId = eventId;
-        }
+    /// <summary>
+    /// Конструктор
+    /// </summary>
+    /// <param name="eventId"></param>
+    public DeleteEventCommand(Guid eventId)
+    {
+        EventId = eventId;
     }
 }

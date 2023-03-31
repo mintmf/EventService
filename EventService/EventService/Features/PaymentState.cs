@@ -1,24 +1,23 @@
-﻿namespace EventService.Features
+﻿namespace EventService.Features;
+
+/// <summary>
+/// Состояние платежа
+/// </summary>
+// ReSharper disable UnusedMember.Global сейчас не используется
+public enum PaymentState
 {
     /// <summary>
-    /// Состояние платежа
+    /// Ожидание выполнения операции передачи билета пользователю
     /// </summary>
-    // ReSharper disable UnusedMember.Global сечас не исползуется
-    public enum PaymentState
-    {
-        /// <summary>
-        /// Ожидание выполнения операции передачи билета пользователю
-        /// </summary>
-        Hold,
+    Hold,
 
-        /// <summary>
-        /// Подвтерждение платежа
-        /// </summary>
-        Confirmed,
+    /// <summary>
+    /// Подтверждение платежа
+    /// </summary>
+    Confirmed,
 
-        /// <summary>
-        /// Отмена платежа
-        /// </summary>
-        Canceled
-    }
+    /// <summary>
+    /// Отмена платежа
+    /// </summary>
+    Canceled
 }

@@ -6,8 +6,7 @@ using EventRepository = EventService.ObjectStorage.EventRepository;
 using IEventRepository = EventService.ObjectStorage.IEventRepository;
 using EventService.ObjectStorage;
 using IdentityModel.AspNetCore.OAuth2Introspection;
-using MongoDB.Driver;
-using EventService.Infrastracture;
+using EventService.Infrastructure;
 using Microsoft.AspNetCore.HttpLogging;
 using Polly;
 using EventService.Services.BackgroundServices;
@@ -136,7 +135,7 @@ app.UseSwagger();
 app.UseSwaggerUI(c => 
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Event Service");
-    c.RoutePrefix = String.Empty;
+    c.RoutePrefix = string.Empty;
 });
 
 //app.UseHttpsRedirection();

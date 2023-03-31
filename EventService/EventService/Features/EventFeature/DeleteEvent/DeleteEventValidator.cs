@@ -1,18 +1,19 @@
 ﻿using FluentValidation;
+using JetBrains.Annotations;
 
-namespace EventService.Features.EventFeature.DeleteEvent
+namespace EventService.Features.EventFeature.DeleteEvent;
+
+/// <summary>
+/// Валидация удаления мероприятия
+/// </summary>
+[UsedImplicitly]
+public class DeleteEventValidator : AbstractValidator<DeleteEventCommand>
 {
     /// <summary>
-    /// Валидация удаления мерприятия
+    /// Правила валидации
     /// </summary>
-    public class DeleteEventValidator : AbstractValidator<DeleteEventCommand>
+    public DeleteEventValidator()
     {
-        /// <summary>
-        /// Правила валидации
-        /// </summary>
-        public DeleteEventValidator()
-        {
-            RuleFor(d => d.EventId).NotEmpty();
-        }
+        RuleFor(d => d.EventId).NotEmpty();
     }
 }

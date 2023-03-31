@@ -1,9 +1,7 @@
 using EventService.Features.EventFeature;
 using EventService.Features.EventFeature.CreateEvent;
 using EventService.ObjectStorage;
-using EventService.Services;
 using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using SC.Internship.Common.ScResult;
 
@@ -15,16 +13,8 @@ public class CreateEventTest
     private readonly CreateEventCommandHandler _handler;
     public CreateEventTest()
     {
-        var serviceCollection = new ServiceCollection();
-        serviceCollection.AddTransient<IImageService, ImageService>();
-        serviceCollection.AddTransient<ISpaceService, SpaceService>();
-        serviceCollection.AddTransient<IValidator<Event>, EventValidator>();
-
-        var serviceProvider = serviceCollection.BuildServiceProvider();
-        var validator = serviceProvider.GetService<IValidator<Event>>() ?? throw new ArgumentNullException();
-
         _mockRepository = Substitute.For<IEventRepository>();
-        _handler = new CreateEventCommandHandler(_mockRepository, validator);
+        _handler = new CreateEventCommandHandler(_mockRepository);
     }
 
     [Fact]
