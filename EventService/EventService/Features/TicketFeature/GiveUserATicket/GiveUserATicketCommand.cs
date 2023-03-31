@@ -9,7 +9,7 @@ namespace EventService.Features.TicketFeature.GiveUserATicket
     public class GiveUserATicketCommand : IRequest<ScResult<Ticket>>
     {
         /// <summary>
-        /// ID ьилета
+        /// ID билета
         /// </summary>
         public Guid TicketId { get; set; }
 

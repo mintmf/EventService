@@ -11,11 +11,19 @@ using EventService.Infrastracture;
 using Microsoft.AspNetCore.HttpLogging;
 using Polly;
 using EventService.Services.BackgroundServices;
+using MediatR;
+using EventService.Features;
+using MongoDB.Bson.Serialization;
+
+BsonClassMap.RegisterClassMap<Event>(cm =>
+{
+    cm.AutoMap();
+    cm.SetIgnoreExtraElements(true);
+});
 
 var builder = WebApplication.CreateBuilder(args);
 
 const string allowAllPolicy = "_allowAllPolicy";
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: allowAllPolicy,
@@ -95,10 +103,11 @@ builder.Services.AddScoped<ISpaceService, SpaceService>();
 builder.Services.AddScoped<IValidator<Event>, EventValidator>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
-builder.Services.AddScoped<IMongoClient, EventsMongoClient>();
-builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IEventsMongoClient, EventsMongoClient>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IRabbitMqService, RabbitMqService>();
+
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
 builder.Services.Configure<IdentityServerConfig>(builder.Configuration.GetSection("IdentityServer"));
 builder.Services.Configure<EventsMongoConfig>(builder.Configuration.GetSection("MongoParameters"));
@@ -110,6 +119,7 @@ builder.Services.Configure<RabbitMqConfig>(builder.Configuration.GetSection("Rab
 builder.Services.AddHostedService<RabbitMqListener>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
 builder.Services.AddHttpContextAccessor();
 
@@ -130,7 +140,7 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = String.Empty;
 });
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseCors(allowAllPolicy);
 

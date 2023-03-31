@@ -1,13 +1,11 @@
 ﻿using EventService.Features.TicketFeature;
 using JetBrains.Annotations;
-using MongoDB.Bson.Serialization.Attributes;
 
 namespace EventService.Features.EventFeature
 {
     /// <summary>
     /// Мероприятия
     /// </summary>
-    [BsonIgnoreExtraElements]
     public class Event
     {
         /// <summary>
@@ -18,12 +16,12 @@ namespace EventService.Features.EventFeature
         /// <summary>
         /// Начало мероприятия
         /// </summary>
-        public DateTime StartTime { get; set; }
+        public DateTimeOffset StartTime { get; set; }
 
         /// <summary>
         /// Конец мероприятия
         /// </summary>
-        public DateTime EndTime { get; set; }
+        public DateTimeOffset EndTime { get; set; }
 
         /// <summary>
         /// Название мероприятия

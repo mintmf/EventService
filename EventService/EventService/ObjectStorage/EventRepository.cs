@@ -12,15 +12,15 @@ namespace EventService.ObjectStorage
     /// </summary>
     public class EventRepository : IEventRepository
     {
-        private readonly IMongoClient _mongoClient;
+        private readonly IEventsMongoClient _mongoClient;
         private readonly EventsMongoConfig _config;
-
+        
         /// <summary>
         /// Конструктор репозитория мероприятий
         /// </summary>
         /// <param name="mongoClient"></param>
         /// <param name="options"></param>
-        public EventRepository(IMongoClient mongoClient, IOptions<EventsMongoConfig> options)
+        public EventRepository(IEventsMongoClient mongoClient, IOptions<EventsMongoConfig> options)
         {
             _mongoClient = mongoClient;
             _config = options.Value;
@@ -51,11 +51,7 @@ namespace EventService.ObjectStorage
         /// <returns></returns>
         public async Task<Event> UpdateEventAsync(Guid eventId, Event sourceEvent)
         {
-            var db = _mongoClient.GetDatabase(_config.Database);
-            var collection = db.GetCollection<Event>(_config.EventsCollection);
-            var updateFilter = Builders<Event>.Filter.Eq("EventId", eventId);
-
-            var result = await collection.ReplaceOneAsync(updateFilter, sourceEvent);
+            var result = await _mongoClient.GetEvents().ReplaceOneAsync(e => e.EventId == eventId, sourceEvent);
 
             if (result.ModifiedCount == 0)
             {
@@ -72,11 +68,7 @@ namespace EventService.ObjectStorage
         /// <returns></returns>
         public async Task<bool> DeleteEventAsync(Guid eventId)
         {
-            var db = _mongoClient.GetDatabase(_config.Database);
-            var collection = db.GetCollection<Event>(_config.EventsCollection);
-            var deleteFilter = Builders<Event>.Filter.Eq("EventId", eventId);
-
-            var result = await collection.DeleteOneAsync(deleteFilter);
+            var result = await _mongoClient.GetEvents().DeleteOneAsync(e => e.EventId == eventId);
 
             if (result.DeletedCount == 0)
             {
@@ -92,9 +84,9 @@ namespace EventService.ObjectStorage
         /// <returns></returns>
         public async Task<List<Event>> GetEventListAsync()
         {
-            var db = _mongoClient.GetDatabase(_config.Database);
-            var collection = db.GetCollection<Event>(_config.EventsCollection);
-            var events = await collection.Find(new BsonDocument()).ToListAsync();
+            //var db = _mongoClient.GetDatabase(_config.Database);
+            //var collection = db.GetCollection<Event>(_config.EventsCollection);
+            var events = await _mongoClient.GetEvents().Find(new BsonDocument()).ToListAsync();
 
             return events;
         }
@@ -107,6 +99,7 @@ namespace EventService.ObjectStorage
         /// <returns></returns>
         /// <exception cref="ScException"></exception>
         public async Task AddTicketsToAnEventAsync(Guid eventId, List<Ticket> tickets)
+        // FindEvent ( ... )
         {
             var db = _mongoClient.GetDatabase(_config.Database);
             var collection = db.GetCollection<Event>(_config.EventsCollection);
@@ -146,6 +139,7 @@ namespace EventService.ObjectStorage
         /// <param name="eventId"></param>
         /// <returns></returns>
         public async Task<bool> CheckIfPlaceIsAvailable(int place, Guid eventId)
+        // GetEvent( ... )
         {
             var db = _mongoClient.GetDatabase(_config.Database);
             var collection = db.GetCollection<Event>(_config.EventsCollection);
