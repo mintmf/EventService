@@ -1,19 +1,18 @@
 ﻿using SC.Internship.Common.ScResult;
 
-namespace EventService.Services
+namespace EventService.Services;
+
+/// <summary>
+/// Сервис авторизации
+/// </summary>
+public class AuthorizationService : IAuthorizationService
 {
     /// <summary>
-    /// Сервис авторизации
+    /// Аутентификация
     /// </summary>
-    public class AuthorizationService : IAuthorizationService
+    /// <returns>Результат аутентификации</returns>
+    public async Task<ScResult> AuthorizeAsync()
     {
-        /// <summary>
-        /// Аутентификация
-        /// </summary>
-        /// <returns>Результат аутентификации</returns>
-        public async Task<ScResult> AuthorizeAsync()
-        {
-            return await Task.FromResult(new ScResult());
-        }
+        return await Task.FromResult(new ScResult());
     }
 }

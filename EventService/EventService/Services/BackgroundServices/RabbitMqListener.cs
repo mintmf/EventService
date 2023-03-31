@@ -1,129 +1,127 @@
 ﻿using RabbitMQ.Client.Events;
 using RabbitMQ.Client;
 using System.Text;
-using EventService.Infrastracture;
+using EventService.Infrastructure;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using EventService.Features;
 using EventService.ObjectStorage;
 
-namespace EventService.Services.BackgroundServices
+namespace EventService.Services.BackgroundServices;
+
+/// <summary>
+/// Потребитель очереди
+/// </summary>
+public class RabbitMqListener : BackgroundService
 {
+    private readonly IConnection _connection;
+    private readonly IModel _channel;
+
+    private readonly RabbitMqConfig _rabbitMqParameters;
+    private readonly IServiceProvider _serviceProvider;
+
+    private readonly ILogger<RabbitMqListener> _logger;
+
     /// <summary>
-    /// Потребитель очереди
+    /// Конструктор
     /// </summary>
-    public class RabbitMqListener : BackgroundService
+    /// <param name="options"></param>
+    /// <param name="serviceProvider"></param>
+    /// <param name="logger"></param>
+    public RabbitMqListener(IOptions<RabbitMqConfig> options,
+        IServiceProvider serviceProvider, ILogger<RabbitMqListener> logger)
     {
-        private readonly IConnection _connection;
-        private readonly IModel _channel;
+        _rabbitMqParameters = options.Value;
 
-        private readonly RabbitMqConfig _rabbitMqParameters;
-        private readonly IServiceProvider _serviceProvider;
+        _serviceProvider = serviceProvider;
 
-        private readonly ILogger<RabbitMqListener> _logger;
+        _logger = logger;
 
-        /// <summary>
-        /// Контсруктор
-        /// </summary>
-        /// <param name="options"></param>
-        /// <param name="serviceProvider"></param>
-        /// <param name="logger"></param>
-        public RabbitMqListener(IOptions<RabbitMqConfig> options,
-            IServiceProvider serviceProvider, ILogger<RabbitMqListener> logger)
+        var factory = new ConnectionFactory
         {
-            _rabbitMqParameters = options.Value;
+            HostName = _rabbitMqParameters.Address
+        };
 
-            _serviceProvider = serviceProvider;
+        _connection = factory.CreateConnection();
+        _channel = _connection.CreateModel();
+        _channel.QueueDeclare(queue: _rabbitMqParameters.QueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+    }
 
-            _logger = logger;
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    /// <param name="stoppingToken"></param>
+    /// <returns></returns>
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        stoppingToken.ThrowIfCancellationRequested();
 
-            var factory = new ConnectionFactory
+        var consumer = new EventingBasicConsumer(_channel);
+
+        // ReSharper disable once UnusedParameter.Local сейчас не используется
+        consumer.Received += (ch, ea) =>
+        {
+            var content = Encoding.UTF8.GetString(ea.Body.ToArray());
+
+            if (ProcessMessage(content))
             {
-                HostName = _rabbitMqParameters.Address
-            };
+                _channel.BasicAck(ea.DeliveryTag, false);
+            }
+        };
 
-            _connection = factory.CreateConnection();
-            _channel = _connection.CreateModel();
-            _channel.QueueDeclare(queue: _rabbitMqParameters.QueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+        _channel.BasicConsume(_rabbitMqParameters.QueueName, false, consumer);
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public override void Dispose()
+    {
+        _channel.Close();
+        _connection.Close();
+        base.Dispose();
+    }
+
+    private bool ProcessMessage(string content)
+    {
+        _logger.LogInformation($"Message: {content}");
+
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            return false;
         }
 
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="stoppingToken"></param>
-        /// <returns></returns>
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        var rabbitMqEvent = JsonConvert.DeserializeObject<RabbitMqEvent>(content);
+
+        if (rabbitMqEvent == null)
         {
-            stoppingToken.ThrowIfCancellationRequested();
-
-            var consumer = new EventingBasicConsumer(_channel);
-
-            // ReSharper disable once UnusedParameter.Local сейчас не используется
-            consumer.Received += (ch, ea) =>
-            {
-                var content = Encoding.UTF8.GetString(ea.Body.ToArray());
-
-                if (ProcessMessage(content))
-                {
-                    _channel.BasicAck(ea.DeliveryTag, false);
-                }
-            };
-
-            _channel.BasicConsume(_rabbitMqParameters.QueueName, false, consumer);
-
-            return Task.CompletedTask;
+            return false;
         }
 
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        public override void Dispose()
+        if (rabbitMqEvent.Type == RabbitMqEventType.EventDelete)
         {
-            _channel.Close();
-            _connection.Close();
-            base.Dispose();
+            return false;
         }
 
-        private bool ProcessMessage(string content)
+        using var scope = _serviceProvider.CreateScope();
+        var eventRepository =
+            scope.ServiceProvider.GetRequiredService<IEventRepository>();
+
+        switch (rabbitMqEvent.Type)
         {
-            _logger.LogInformation($"Message: {content}");
-
-            if (String.IsNullOrWhiteSpace(content))
-            {
-                return false;
-            }
-
-            var rabbitMqEvent = JsonConvert.DeserializeObject<RabbitMqEvent>(content);
-
-            if (rabbitMqEvent == null)
-            {
-                return false;
-            }
-
-            if (rabbitMqEvent.Type == RabbitMqEventType.EventDelete)
-            {
-                return false;
-            }
-
-            using IServiceScope scope = _serviceProvider.CreateScope();
-            IEventRepository eventRepository =
-                scope.ServiceProvider.GetRequiredService<IEventRepository>();
-
-            if (rabbitMqEvent.Type == RabbitMqEventType.SpaceDelete)
-            {
+            case RabbitMqEventType.SpaceDelete:
                 eventRepository.DeleteEventsBySpaceAsync(rabbitMqEvent.Id);
 
                 return true;
-            }
-
-            if (rabbitMqEvent.Type == RabbitMqEventType.ImageDelete)
-            {
+            case RabbitMqEventType.ImageDelete:
                 eventRepository.DeleteImageAsync(rabbitMqEvent.Id);
 
                 return true;
-            }
-
-            return false;
+            case RabbitMqEventType.EventDelete:
+            default:
+                return false;
         }
     }
 }

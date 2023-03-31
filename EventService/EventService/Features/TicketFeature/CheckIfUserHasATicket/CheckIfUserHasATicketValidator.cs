@@ -1,20 +1,21 @@
 ﻿using FluentValidation;
+using JetBrains.Annotations;
 
-namespace EventService.Features.TicketFeature.CheckIfUserHasATicket
+namespace EventService.Features.TicketFeature.CheckIfUserHasATicket;
+
+/// <summary>
+/// Валидация команды проверки того, что у заданного пользователя есть билет
+/// </summary>
+[UsedImplicitly]
+public class CheckIfUserHasATicketValidator : AbstractValidator<CheckIfUserHasATicketCommand>
 {
     /// <summary>
-    /// Валидация команды проверки того, что у заданного пользователя есть билет
+    /// Правила валидации
     /// </summary>
-    public class CheckIfUserHasATicketValidator : AbstractValidator<CheckIfUserHasATicketCommand>
+    public CheckIfUserHasATicketValidator()
     {
-        /// <summary>
-        /// Правила валидации
-        /// </summary>
-        public CheckIfUserHasATicketValidator()
-        {
-            RuleFor(c => c.EventId).NotEmpty();
+        RuleFor(c => c.EventId).NotEmpty();
 
-            RuleFor(c => c.UserId).NotEmpty();
-        }
+        RuleFor(c => c.UserId).NotEmpty();
     }
 }

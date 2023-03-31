@@ -1,15 +1,14 @@
-﻿namespace EventService.Services
+﻿namespace EventService.Services;
+
+/// <summary>
+/// Интерфейс сервиса изображений
+/// </summary>
+public interface IImageService
 {
     /// <summary>
-    /// Интерфейс сервиса изображений
+    /// Проверка существования изображения
     /// </summary>
-    public interface IImageService
-    {
-        /// <summary>
-        /// Проверка существования изображения
-        /// </summary>
-        /// <param name="imageId"></param>
-        /// <returns></returns>
-        Task<bool> IsImageExists(Guid? imageId);
-    }
+    /// <param name="imageId"></param>
+    /// <returns></returns>
+    Task<bool> IsImageExists(Guid? imageId);
 }

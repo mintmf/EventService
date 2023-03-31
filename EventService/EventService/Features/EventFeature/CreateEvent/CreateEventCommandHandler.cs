@@ -1,47 +1,42 @@
 ﻿using EventService.ObjectStorage;
-using FluentValidation;
 using JetBrains.Annotations;
 using MediatR;
 using SC.Internship.Common.ScResult;
 
-namespace EventService.Features.EventFeature.CreateEvent
+namespace EventService.Features.EventFeature.CreateEvent;
+
+/// <summary>
+/// Класс обработчика команды создания нового мероприятия
+/// </summary>
+[UsedImplicitly]
+public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, ScResult<Event>>
 {
+    private readonly IEventRepository _eventRepository;
+
     /// <summary>
-    /// Класс обработчика команды создания нового мероприятия
+    /// 
     /// </summary>
-    [UsedImplicitly]
-    public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, ScResult<Event>>
+    /// <param name="eventRepository"></param>
+    public CreateEventCommandHandler(IEventRepository eventRepository)
     {
-        private readonly IEventRepository _eventRepository;
-        private readonly IValidator<Event> _validator;
+        _eventRepository = eventRepository;
+    }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="eventRepository"></param>
-        /// <param name="validator"></param>
-        public CreateEventCommandHandler(IEventRepository eventRepository, IValidator<Event> validator)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="command"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<ScResult<Event>> Handle(CreateEventCommand command, CancellationToken cancellationToken)
+    {
+        command.Event.EventId = Guid.NewGuid();
+
+        var createdEvent = await _eventRepository.AddEventAsync(command.Event);
+
+        return new ScResult<Event>
         {
-            _eventRepository = eventRepository;
-            _validator = validator;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="command"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public async Task<ScResult<Event>> Handle(CreateEventCommand command, CancellationToken cancellationToken)
-        {
-            await _validator.ValidateAndThrowAsync(command.Event, cancellationToken);
-                
-            var createdEvent = await _eventRepository.AddEventAsync(command.Event);
-
-            return new ScResult<Event>
-            {
-                Result = createdEvent
-            };
-        }
+            Result = createdEvent
+        };
     }
 }

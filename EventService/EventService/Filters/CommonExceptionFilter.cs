@@ -4,20 +4,22 @@ using Microsoft.AspNetCore.Mvc;
 using SC.Internship.Common.Exceptions;
 using SC.Internship.Common.ScResult;
 
-namespace EventService.Filters
+namespace EventService.Filters;
+
+/// <summary>
+/// Фильтр исключений
+/// </summary>
+public class CommonExceptionFilter : IExceptionFilter
 {
     /// <summary>
-    /// Фильтр исключений
+    /// Обработка исключения
     /// </summary>
-    public class CommonExceptionFilter : IExceptionFilter
+    /// <param name="context"></param>
+    public void OnException(ExceptionContext context)
     {
-        /// <summary>
-        /// Обработка исключения
-        /// </summary>
-        /// <param name="context"></param>
-        public void OnException(ExceptionContext context)
+        switch (context.Exception)
         {
-            if (context.Exception is ValidationException validationException)
+            case ValidationException validationException:
             {
                 var result = new ScResult
                 {
@@ -39,22 +41,20 @@ namespace EventService.Filters
 
                 return;
             }
-
-            if (context.Exception is ScException)
-            {
+            case ScException:
                 context.Result = new JsonResult(new ScResult(new ScError { Message = context.Exception.Message }))
                 {
                     StatusCode = StatusCodes.Status400BadRequest
                 };
 
                 return;
-            }
-
-            context.Result = new ContentResult
-            {
-                Content = context.Exception.ToString(),
-                StatusCode = StatusCodes.Status500InternalServerError
-            };
+            default:
+                context.Result = new ContentResult
+                {
+                    Content = context.Exception.ToString(),
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+                break;
         }
     }
 }

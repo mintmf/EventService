@@ -13,7 +13,9 @@
 
 >`cd .. && cd EventService && docker build -t eventservice -f EventService/Dockerfile .`
 
->`cd EventService && docker compose up --detach && start http://localhost:5010/index.html`  
+>`cd EventService && docker compose up --detach`  
+
+>`start http://localhost:5010/index.html`
 
  **для загрузки страницы может потребоваться время*
 

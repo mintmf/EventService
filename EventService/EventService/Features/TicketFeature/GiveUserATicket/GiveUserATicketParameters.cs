@@ -1,13 +1,12 @@
-﻿namespace EventService.Features.TicketFeature.GiveUserATicket
+﻿namespace EventService.Features.TicketFeature.GiveUserATicket;
+
+/// <summary>
+/// Параметры метода, который выдает пользователю билет
+/// </summary>
+public class GiveUserATicketParameters
 {
     /// <summary>
-    /// Параметры метода, который выдает пользователю билет
+    /// ID пользователя
     /// </summary>
-    public class GiveUserATicketParameters
-    {
-        /// <summary>
-        /// ID пользователя
-        /// </summary>
-        public Guid UserId { get; set; }
-    }
+    public Guid UserId { get; set; }
 }
