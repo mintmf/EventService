@@ -8,16 +8,6 @@ namespace EventService.Features.EventFeature.UpdateEvent;
 public class UpdateEventCommand : IRequest<Event>
 {
     /// <summary>
-    /// ID мероприятия
-    /// </summary>
-    public Guid EventId { get; set; }
-
-    /// <summary>
-    /// Мероприятие
-    /// </summary>
-    public Event Event { get; set; }
-
-    /// <summary>
     /// Конструктор
     /// </summary>
     /// <param name="eventId"></param>
@@ -27,4 +17,14 @@ public class UpdateEventCommand : IRequest<Event>
         EventId = eventId;
         Event = eventSource;
     }
+
+    /// <summary>
+    /// ID мероприятия
+    /// </summary>
+    public Guid EventId { get; set; }
+
+    /// <summary>
+    /// Мероприятие
+    /// </summary>
+    public Event Event { get; set; }
 }

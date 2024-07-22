@@ -17,18 +17,18 @@ public class GiveUserATicketCommandHandler : IRequestHandler<GiveUserATicketComm
     /// <summary>
     /// Конструктор
     /// </summary>
-    /// <param name="eveRepository"></param>
-    public GiveUserATicketCommandHandler(IEventRepository eveRepository)
+    /// <param name="eventRepository">Репозиторий мероприятий</param>
+    public GiveUserATicketCommandHandler(IEventRepository eventRepository)
     {
-        _eventRepository = eveRepository; 
+        _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository)); 
     }
 
     /// <summary>
     /// Обработчик команды выдачи билета пользователю
     /// </summary>
-    /// <param name="request"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="request">Команда выдачи билета пользователю</param>
+    /// <param name="cancellationToken">Токен отмены</param>
+    /// <returns>Билет</returns>
     /// <exception cref="NotImplementedException"></exception>
     public async Task<ScResult<Ticket>> Handle(GiveUserATicketCommand request, CancellationToken cancellationToken)
     {

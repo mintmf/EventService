@@ -13,21 +13,22 @@ namespace EventService.Features.EventFeature.CheckIfPlaceIsAvailable;
 public class CheckIfPlaceIsAvailableCommandHandler : IRequestHandler<CheckIfPlaceIsAvailableCommand, ScResult<bool>>
 {
     private readonly IEventRepository _eventRepository;
+
     /// <summary>
     /// Конструктор
     /// </summary>
-    /// <param name="eventRepository"></param>
+    /// <param name="eventRepository">Репозиторий мероприятий</param>
     public CheckIfPlaceIsAvailableCommandHandler(IEventRepository eventRepository)
     {
-        _eventRepository = eventRepository;
+        _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
     }
 
     /// <summary>
     /// Обработчик
     /// </summary>
-    /// <param name="command"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="command">Команда проверки доступности места</param>
+    /// <param name="cancellationToken">Токен отмены</param>
+    /// <returns>Признак доступности</returns>
     public async Task<ScResult<bool>> Handle(CheckIfPlaceIsAvailableCommand command, CancellationToken cancellationToken)
     {
         var foundEvent = await _eventRepository.GetEventAsync(command.EventId);
@@ -61,8 +62,6 @@ public class CheckIfPlaceIsAvailableCommandHandler : IRequestHandler<CheckIfPlac
                 Result = false
             };
         }
-
-        //var result = await _eventRepository.CheckIfPlaceIsAvailable(command.Place, command.EventId);
 
         return new ScResult<bool>
         {

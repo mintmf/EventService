@@ -16,18 +16,18 @@ public class AuthorizeCommandHandler : IRequestHandler<AuthorizeCommand, ScResul
     /// <summary>
     /// Конструктор
     /// </summary>
-    /// <param name="authorizationService"></param>
+    /// <param name="authorizationService">Сервис авторизации</param>
     public AuthorizeCommandHandler(IAuthorizationService authorizationService)
     {
-        _authorizationService = authorizationService;
+        _authorizationService = authorizationService ?? throw new ArgumentNullException(nameof(authorizationService));
     }
 
     /// <summary>
     /// Обработчик команды аутентификации
     /// </summary>
-    /// <param name="request"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="request">Команда авторизации</param>
+    /// <param name="cancellationToken">Токен отмены</param>
+    /// <returns>Ответ по-умолчанию</returns>
     /// <exception cref="NotImplementedException"></exception>
     public async Task<ScResult> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
     {

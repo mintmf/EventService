@@ -22,7 +22,7 @@ public class AuthorizationController : ControllerBase
     /// <param name="mediator"></param>
     public AuthorizationController(IMediator mediator)
     {
-        _mediatr = mediator;
+        _mediatr = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
 
     /// <summary>

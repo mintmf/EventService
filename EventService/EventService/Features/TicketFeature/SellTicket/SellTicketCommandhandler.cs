@@ -19,20 +19,20 @@ public class SellTicketCommandHandler : IRequestHandler<SellTicketCommand, ScRes
     /// <summary>
     /// Конструктор
     /// </summary>
-    /// <param name="paymentService"></param>
-    /// <param name="eventRepository"></param>
+    /// <param name="paymentService">Сервис платежей</param>
+    /// <param name="eventRepository">Репозиторий мероприятий</param>
     public SellTicketCommandHandler(IPaymentService paymentService, IEventRepository eventRepository)
     {
-        _paymentService = paymentService;
-        _eventRepository = eventRepository; 
+        _paymentService = paymentService ?? throw new ArgumentNullException(nameof(paymentService));
+        _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository)); 
     }
 
     /// <summary>
     /// Обработчик команды продажи пользователю билета
     /// </summary>
-    /// <param name="command"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="command">Команда продажи пользователю билета</param>
+    /// <param name="cancellationToken">Токен отмены</param>
+    /// <returns>Результат по-умолчанию</returns>
     public async Task<ScResult> Handle(SellTicketCommand command, CancellationToken cancellationToken)
     {
         var payment = await _paymentService.CreatePaymentAsync();

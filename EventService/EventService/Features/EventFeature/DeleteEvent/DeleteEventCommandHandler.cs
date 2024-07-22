@@ -18,20 +18,20 @@ public class DeleteEventCommandHandler : IRequestHandler<DeleteEventCommand>
     /// <summary>
     /// Конструктор
     /// </summary>
-    /// <param name="eventRepository"></param>
-    /// <param name="rabbitMqService"></param>
+    /// <param name="eventRepository">Репозиторий мероприятий</param>
+    /// <param name="rabbitMqService">Сервис RabbitMq</param>
     public DeleteEventCommandHandler(IEventRepository eventRepository, IRabbitMqService rabbitMqService)
     {
-        _eventRepository = eventRepository;
-        _rabbitMqService = rabbitMqService;
+        _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
+        _rabbitMqService = rabbitMqService ?? throw new ArgumentNullException(nameof(rabbitMqService));
     }
 
     /// <summary>
     /// Обработчик команды удаления мероприятия
     /// </summary>
-    /// <param name="command"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="command">Команда удаления мероприятия</param>
+    /// <param name="cancellationToken">Токен отмены</param>
+    /// <returns>Задание</returns>
     public async Task Handle(DeleteEventCommand command, CancellationToken cancellationToken)
     {
         await _eventRepository.DeleteEventAsync(command.EventId);
