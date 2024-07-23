@@ -25,12 +25,13 @@ public class TicketController : ControllerBase
     /// <summary>
     /// Конструктор
     /// </summary>
-    /// <param name="mediator"></param>
-    /// <param name="logger"></param>
+    /// <param name="mediator">Медиатор</param>
+    /// <param name="logger">Логгер</param>
+    /// <exception cref="ArgumentNullException"></exception>
     public TicketController(IMediator mediator, ILogger<TicketController> logger)
     {
-        _mediator = mediator;
-        _logger = logger;
+        _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     /// <summary>
@@ -109,7 +110,11 @@ public class TicketController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ScResult> SellTicket([FromRoute] Guid ticketId, [FromRoute] Guid userId)
     {
-        var result = await _mediator.Send(new SellTicketCommand { TicketId = ticketId, UserId =  userId });
+        var result = await _mediator.Send(new SellTicketCommand 
+        { 
+            TicketId = ticketId, 
+            UserId =  userId 
+        });
 
         return result;
     }

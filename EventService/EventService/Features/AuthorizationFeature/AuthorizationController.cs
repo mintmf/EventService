@@ -19,7 +19,8 @@ public class AuthorizationController : ControllerBase
     /// <summary>
     /// Конструктор
     /// </summary>
-    /// <param name="mediator"></param>
+    /// <param name="mediator">Медиатор</param>
+    /// <exception cref="ArgumentNullException"></exception>
     public AuthorizationController(IMediator mediator)
     {
         _mediatr = mediator ?? throw new ArgumentNullException(nameof(mediator));

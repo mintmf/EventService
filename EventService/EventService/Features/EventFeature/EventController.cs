@@ -25,10 +25,11 @@ public class EventController : ControllerBase
     /// <summary>
     /// Конструктор
     /// </summary>
-    /// <param name="mediator"></param>
+    /// <param name="mediator">Медиатор</param>
+    /// <exception cref="ArgumentNullException"></exception>
     public EventController(IMediator mediator)
     {
-        _mediatr = mediator;
+        _mediatr = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
 
     /// <summary>
@@ -118,7 +119,11 @@ public class EventController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ScResult<bool>> CheckPlace([FromRoute] int place, [FromRoute] Guid eventId)
     {
-        var result = await _mediatr.Send(new CheckIfPlaceIsAvailableCommand { Place = place, EventId = eventId });
+        var result = await _mediatr.Send(new CheckIfPlaceIsAvailableCommand 
+        { 
+            Place = place, 
+            EventId = eventId 
+        });
 
         return result;
     }
