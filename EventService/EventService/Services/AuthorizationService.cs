@@ -8,7 +8,7 @@ namespace EventService.Services;
 public class AuthorizationService : IAuthorizationService
 {
     /// <summary>
-    /// Аутентификация
+    /// Авторизация
     /// </summary>
     /// <returns>Результат аутентификации</returns>
     public async Task<ScResult> AuthorizeAsync()

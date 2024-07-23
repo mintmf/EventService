@@ -9,6 +9,15 @@ namespace EventService.Features.TicketFeature.GiveUserATicket;
 public class GiveUserATicketCommand : IRequest<ScResult<Ticket>>
 {
     /// <summary>
+    /// Конструктор
+    /// </summary>
+    /// <param name="parameters"></param>
+    public GiveUserATicketCommand(GiveUserATicketParameters parameters)
+    {
+        Parameters = parameters;
+    }
+
+    /// <summary>
     /// ID билета
     /// </summary>
     public Guid TicketId { get; set; }
@@ -17,13 +26,4 @@ public class GiveUserATicketCommand : IRequest<ScResult<Ticket>>
     /// Параметры
     /// </summary>
     public GiveUserATicketParameters Parameters {get; set; }
-
-    /// <summary>
-    /// Конструктор
-    /// </summary>
-    /// <param name="parameters"></param>
-    public GiveUserATicketCommand(GiveUserATicketParameters parameters)
-    {
-        Parameters = parameters;
-    }
 }

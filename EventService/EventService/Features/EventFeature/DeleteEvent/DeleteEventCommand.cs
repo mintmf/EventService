@@ -3,15 +3,10 @@
 namespace EventService.Features.EventFeature.DeleteEvent;
 
 /// <summary>
-/// 
+/// Команда удаления мероприятия
 /// </summary>
 public class DeleteEventCommand : IRequest
 {
-    /// <summary>
-    /// ID мероприятия
-    /// </summary>
-    public Guid EventId { get; set; }
-
     /// <summary>
     /// Конструктор
     /// </summary>
@@ -20,4 +15,9 @@ public class DeleteEventCommand : IRequest
     {
         EventId = eventId;
     }
+
+    /// <summary>
+    /// ID мероприятия
+    /// </summary>
+    public Guid EventId { get; set; }
 }

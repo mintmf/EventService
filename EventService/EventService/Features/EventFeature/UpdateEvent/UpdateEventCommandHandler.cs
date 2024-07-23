@@ -15,18 +15,18 @@ public class UpdateEventCommandHandler : IRequestHandler<UpdateEventCommand, Eve
     /// <summary>
     /// Конструктор
     /// </summary>
-    /// <param name="eventRepository"></param>
+    /// <param name="eventRepository">Репозиторий мероприятий</param>
     public UpdateEventCommandHandler(IEventRepository eventRepository)
     {
-        _eventRepository = eventRepository;
+        _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
     }
 
     /// <summary>
     /// Обработчик команды изменения мероприятия
     /// </summary>
-    /// <param name="command"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="command">Команда обновления мероприятия</param>
+    /// <param name="cancellationToken">Токен отмены</param>
+    /// <returns>Мероприятие</returns>
     public async Task<Event> Handle(UpdateEventCommand command, CancellationToken cancellationToken)
     {
         command.Event.EventId = command.EventId;

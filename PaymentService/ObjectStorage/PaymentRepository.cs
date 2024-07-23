@@ -1,9 +1,9 @@
-﻿namespace PaymentService
+﻿namespace PaymentService.ObjectStorage
 {
     /// <summary>
     /// Репозиторий платежей
     /// </summary>
-    public class PaymentRepository
+    public class PaymentRepository : IPaymentRepository
     {
         private static List<Payment> _paymentList = new();
 
@@ -24,6 +24,11 @@
             return payment;
         }
 
+        /// <summary>
+        /// Подтверждение платежа
+        /// </summary>
+        /// <param name="paymentId">ID платежа</param>
+        /// <returns>Платеж</returns>
         public Payment ConfirmPayment(Guid paymentId)
         {
             var index = _paymentList.FindIndex(p => p.PaymentId == paymentId);
@@ -33,6 +38,11 @@
             return _paymentList[index];
         }
 
+        /// <summary>
+        /// Отмена платежа
+        /// </summary>
+        /// <param name="paymentId">ID платежа</param>
+        /// <returns>Платеж</returns>
         public Payment CancelPayment(Guid paymentId)
         {
             var index = _paymentList.FindIndex(p => p.PaymentId == paymentId);

@@ -17,29 +17,26 @@ public class AddFreeTicketsCommandHandler : IRequestHandler<AddFreeTicketsComman
     /// <summary>
     /// Конструктор
     /// </summary>
-    /// <param name="eventRepository"></param>
+    /// <param name="eventRepository">Репозиторий мероприятий</param>
     public AddFreeTicketsCommandHandler(IEventRepository eventRepository)
     {
-        _eventRepository = eventRepository;
+        _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
     }
 
     /// <summary>
     /// Обработчик команды добавления бесплатных билетов
     /// </summary>
-    /// <param name="request"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="request">Команда добавления бесплатных билетов</param>
+    /// <param name="cancellationToken">Токен отмены</param>
+    /// <returns>Список билетов</returns>
     public async Task<ScResult<List<Ticket>>> Handle(AddFreeTicketsCommand request, CancellationToken cancellationToken)
     {
         var result = await _eventRepository.GetEventAsync(request.Parameters.EventId);
+
         if (result == null)
         {
             throw new ScException("Мероприятие не найдено");
         }
-        /*if (result.Tickets != null)
-        {
-            throw new ScException("У мероприятия уже есть билеты");
-        }*/
 
         var newTickets = new List<Ticket>();
 

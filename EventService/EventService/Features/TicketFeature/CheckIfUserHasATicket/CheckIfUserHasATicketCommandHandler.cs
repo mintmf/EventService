@@ -17,18 +17,18 @@ public class CheckIfUserHasATicketCommandHandler : IRequestHandler<CheckIfUserHa
     /// <summary>
     /// Конструктор
     /// </summary>
-    /// <param name="eventRepository"></param>
+    /// <param name="eventRepository">Репозиторий мероприятий</param>
     public CheckIfUserHasATicketCommandHandler(IEventRepository eventRepository)
     {
-        _eventRepository = eventRepository;
+        _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
     }
 
     /// <summary>
     /// Обработчик команды проверки на то, есть ли у пользователя билет
     /// </summary>
-    /// <param name="request"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="request">Команда проверки на то, есть ли у пользователя билет</param>
+    /// <param name="cancellationToken">Токен отмены</param>
+    /// <returns>Признак того, есть ли у пользователя билет</returns>
     /// <exception cref="NotImplementedException"></exception>
     public async Task<ScResult<bool>> Handle(CheckIfUserHasATicketCommand request, CancellationToken cancellationToken)
     {

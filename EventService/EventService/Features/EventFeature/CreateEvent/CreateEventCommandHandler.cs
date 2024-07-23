@@ -14,20 +14,20 @@ public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, ScR
     private readonly IEventRepository _eventRepository;
 
     /// <summary>
-    /// 
+    /// Конструктор
     /// </summary>
-    /// <param name="eventRepository"></param>
+    /// <param name="eventRepository">Репозиторий мероприятий</param>
     public CreateEventCommandHandler(IEventRepository eventRepository)
     {
         _eventRepository = eventRepository;
     }
 
     /// <summary>
-    /// 
+    /// Обработчик
     /// </summary>
-    /// <param name="command"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="command">Команда</param>
+    /// <param name="cancellationToken">Токен отмены</param>
+    /// <returns>Созданное мероприятие</returns>
     public async Task<ScResult<Event>> Handle(CreateEventCommand command, CancellationToken cancellationToken)
     {
         command.Event.EventId = Guid.NewGuid();
